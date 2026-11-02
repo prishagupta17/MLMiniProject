@@ -333,8 +333,26 @@
       "schedule": "25 Sep to 1 Oct 2026",
       "start_date": "2026-09-25",
       "end_date": "2026-10-01",
-      "covered_lectures": "1-17",
-      "covered_chapters": "OpenMP and MPI theory and lab"
+      "covered_lectures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "coverage_assumed": true
     },
     {
       "name": "Continuous Lab Evaluation",
@@ -343,8 +361,8 @@
       "schedule": "Respective Labs",
       "start_date": null,
       "end_date": null,
-      "covered_lectures": "6-36",
-      "covered_chapters": "OpenMP, MPI, CUDA"
+      "covered_lectures": [],
+      "coverage_assumed": false
     },
     {
       "name": "Lab Exam",
@@ -353,8 +371,8 @@
       "schedule": "Lab 8 or Lab 9",
       "start_date": null,
       "end_date": null,
-      "covered_lectures": "6-27",
-      "covered_chapters": "OpenMP, MPI, CUDA"
+      "covered_lectures": [],
+      "coverage_assumed": false
     },
     {
       "name": "Mini Project",
@@ -363,8 +381,8 @@
       "schedule": "Lab 5, 10, 12",
       "start_date": null,
       "end_date": null,
-      "covered_lectures": "1-36",
-      "covered_chapters": "OpenMP, MPI, CUDA"
+      "covered_lectures": [],
+      "coverage_assumed": false
     },
     {
       "name": "End-Sem",
@@ -373,8 +391,45 @@
       "schedule": null,
       "start_date": null,
       "end_date": null,
-      "covered_lectures": "1-36",
-      "covered_chapters": "Comprehensive full syllabus"
+      "covered_lectures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "coverage_assumed": true
     }
   ]
 }

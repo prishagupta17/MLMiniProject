@@ -1,6 +1,7 @@
 """
 Loads course plan seed JSONs into SQLite database via SQLAlchemy.
 Populates Courses, Modules, Topics, CourseOutcomes, Assessments, and SDL items.
+Computes normalised topic_importance from course outcomes and lecture counts.
 """
 import os
 import re
@@ -31,6 +32,50 @@ def parse_date(date_str: Optional[str]) -> Optional[datetime]:
 def strip_leading_lecture_prefix(name: str) -> str:
     """Strips leading numeric lecture numbers like '4 ', '23 ', '4(T1) ' from title."""
     return re.sub(r"^\d+\s*[\.\-:]?\s*", "", name).strip()
+
+
+def compute_topic_importances_for_course(db: Session, course_id: int):
+    """
+    Computes topic importance for each CO in a course:
+      raw = (marks of the CO) / (number of lecture topics in that CO)
+      A CO with no lecture topics is ignored (e.g. PCAP CO6).
+      topic_importance = raw / (max raw in that course) -> top value is 1.0
+    Updates Topic.importance for all topics linked to each CO.
+    """
+    course = db.query(Course).get(course_id)
+    if not course:
+        return
+
+    co_topic_counts: Dict[str, int] = {}
+    co_objects: Dict[str, CourseOutcome] = {}
+    for co in course.course_outcomes:
+        co_objects[co.code] = co
+        # Count only lesson-plan lecture topics in this course mapped to this CO
+        topics_in_co = [t for t in co.topics if t.module and t.module.course_id == course_id]
+        if topics_in_co:
+            co_topic_counts[co.code] = len(topics_in_co)
+
+    # Calculate raw scores
+    raw_scores: Dict[str, float] = {}
+    for code, count in co_topic_counts.items():
+        co = co_objects[code]
+        if co.marks is not None and count > 0:
+            raw_scores[code] = co.marks / count
+
+    if not raw_scores:
+        return
+
+    max_raw = max(raw_scores.values())
+
+    # Normalized importances
+    for code, raw in raw_scores.items():
+        importance_val = round(raw / max_raw, 4)
+        co = co_objects[code]
+        for topic in co.topics:
+            if topic.module and topic.module.course_id == course_id:
+                topic.importance = importance_val
+
+    db.commit()
 
 
 def load_seed_file(db: Session, file_path: str) -> Course:
@@ -100,6 +145,13 @@ def load_seed_file(db: Session, file_path: str) -> Course:
         marks = float(marks_val) if marks_val is not None else None
         start_dt = parse_date(a_data.get("start_date"))
         end_dt = parse_date(a_data.get("end_date"))
+        cov_lectures = a_data.get("covered_lectures")
+        if isinstance(cov_lectures, list):
+            cov_lectures_str = json.dumps(cov_lectures)
+        else:
+            cov_lectures_str = str(cov_lectures) if cov_lectures is not None else None
+
+        cov_assumed = bool(a_data.get("coverage_assumed", False))
 
         if not existing_a:
             existing_a = Assessment(
@@ -110,7 +162,8 @@ def load_seed_file(db: Session, file_path: str) -> Course:
                 schedule=a_data.get("schedule"),
                 start_date=start_dt,
                 end_date=end_dt,
-                covered_lectures=a_data.get("covered_lectures"),
+                coverage_assumed=cov_assumed,
+                covered_lectures=cov_lectures_str,
                 covered_chapters=a_data.get("covered_chapters"),
             )
             db.add(existing_a)
@@ -120,7 +173,8 @@ def load_seed_file(db: Session, file_path: str) -> Course:
             existing_a.schedule = a_data.get("schedule")
             existing_a.start_date = start_dt
             existing_a.end_date = end_dt
-            existing_a.covered_lectures = a_data.get("covered_lectures")
+            existing_a.coverage_assumed = cov_assumed
+            existing_a.covered_lectures = cov_lectures_str
             existing_a.covered_chapters = a_data.get("covered_chapters")
     db.flush()
 
@@ -184,7 +238,6 @@ def load_seed_file(db: Session, file_path: str) -> Course:
     # 4. SDL Items
     sdl_items = data.get("sdl_items", [])
     if c_code == "HUM 3022":
-        # Log warning as required by ground truth specification
         row_hours = [item.get("hours", 0) for item in sdl_items]
         if sum(row_hours) == 56 and data.get("sdl_hours_printed_total") == 54:
             logger.warning(
@@ -211,6 +264,10 @@ def load_seed_file(db: Session, file_path: str) -> Course:
             db.add(sdl)
 
     db.commit()
+
+    # 5. Compute normalised topic_importance
+    compute_topic_importances_for_course(db, course.id)
+
     return course
 
 

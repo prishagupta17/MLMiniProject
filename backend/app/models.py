@@ -11,7 +11,9 @@ Two kinds of learner activity are logged:
 Everything else (days_since_last_revision, revision_count, etc.) is DERIVED
 from these two event tables at feature-engineering time, not stored directly.
 """
+import json
 from datetime import datetime
+from typing import List
 from sqlalchemy import (
     Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Table, Text
 )
@@ -85,10 +87,28 @@ class Assessment(Base):
     schedule = Column(String, nullable=True)
     start_date = Column(DateTime, nullable=True)
     end_date = Column(DateTime, nullable=True)
-    covered_lectures = Column(String, nullable=True)   # e.g. "1-15" or comma separated
+    coverage_assumed = Column(Boolean, default=False, nullable=False)
+    covered_lectures = Column(Text, nullable=True)   # stored as JSON list string
     covered_chapters = Column(String, nullable=True)
 
     course = relationship("Course", back_populates="assessments")
+
+    @property
+    def covered_lectures_list(self) -> List[int]:
+        if not self.covered_lectures:
+            return []
+        try:
+            data = json.loads(self.covered_lectures)
+            if isinstance(data, list):
+                return [int(x) for x in data]
+        except Exception:
+            pass
+        res = []
+        for part in str(self.covered_lectures).split(","):
+            p = part.strip()
+            if p.isdigit():
+                res.append(int(p))
+        return res
 
 
 class SDLItem(Base):

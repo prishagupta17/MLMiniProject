@@ -1,11 +1,14 @@
 """
 One row = one self-check RecallEvent (used ONLY as the training label source,
 never as an input feature). All features are computed from data strictly
-before that event's timestamp.
+before that event's timestamp (zero label leakage).
 """
+from datetime import datetime, timedelta
+from typing import Tuple, Dict, Any, Optional
 import pandas as pd
 from sqlalchemy.orm import Session
-from .models import RecallEvent, LearningEvent, Topic
+
+from .models import RecallEvent, LearningEvent, Topic, Course, Module, Assessment
 
 FEATURE_COLUMNS = [
     "times_studied",
@@ -19,36 +22,43 @@ FEATURE_COLUMNS = [
     "confusability_score",
     "prerequisite_completion_ratio",
     "concurrent_topic_load",
+    "days_to_next_assessment",
+    "has_upcoming_assessment",
 ]
 
 CONCURRENT_WINDOW_DAYS = 7
 
 
-def _prereq_completion_ratio(db, user_id, topic, as_of):
+def _prereq_completion_ratio(db: Session, user_id: int, topic: Topic, as_of: datetime) -> float:
     prereqs = topic.prerequisites
     if not prereqs:
         return 1.0  # no prerequisites -> nothing blocking, treat as fully "ready"
     prereq_ids = [p.id for p in prereqs]
     studied = (
         db.query(LearningEvent.topic_id)
-        .filter(LearningEvent.user_id == user_id,
-                 LearningEvent.topic_id.in_(prereq_ids),
-                 LearningEvent.timestamp <= as_of)
+        .filter(
+            LearningEvent.user_id == user_id,
+            LearningEvent.topic_id.in_(prereq_ids),
+            LearningEvent.timestamp <= as_of,
+        )
         .distinct()
         .count()
     )
     return studied / len(prereq_ids)
 
 
-def _concurrent_topic_load(db, user_id, topic_id, as_of, window_days=CONCURRENT_WINDOW_DAYS):
-    from datetime import timedelta
+def _concurrent_topic_load(
+    db: Session, user_id: int, topic_id: int, as_of: datetime, window_days: int = CONCURRENT_WINDOW_DAYS
+) -> int:
     window_start = as_of - timedelta(days=window_days)
     rows = (
         db.query(LearningEvent.topic_id)
-        .filter(LearningEvent.user_id == user_id,
-                 LearningEvent.timestamp >= window_start,
-                 LearningEvent.timestamp <= as_of,
-                 LearningEvent.topic_id != topic_id)
+        .filter(
+            LearningEvent.user_id == user_id,
+            LearningEvent.timestamp >= window_start,
+            LearningEvent.timestamp <= as_of,
+            LearningEvent.topic_id != topic_id,
+        )
         .distinct()
         .all()
     )
@@ -59,6 +69,62 @@ def _confusability_score(topic: Topic) -> int:
     if not topic.confusable_topic_names:
         return 0
     return len([n for n in topic.confusable_topic_names.split(",") if n.strip()])
+
+
+def compute_assessment_timing(db: Session, topic: Topic, as_of: datetime) -> Tuple[int, int]:
+    """
+    Computes days_to_next_assessment and has_upcoming_assessment for a topic as of a date:
+    - Considers only assessments covering this topic that have scheduled dates.
+    - If as_of < start_date: days = (start_date - as_of).days.
+    - If start_date <= as_of <= end_date (inclusive): days = 0.
+    - If as_of > end_date: assessment has passed, not upcoming.
+    - days_to_next_assessment is the smallest such value, capped at 60.
+    - If no upcoming dated assessment exists: days = 60, has_upcoming_assessment = 0.
+    - Otherwise has_upcoming_assessment = 1.
+    """
+    if topic is None or topic.lecture_num is None:
+        return 60, 0
+
+    course = None
+    if topic.module and topic.module.course:
+        course = topic.module.course
+    elif topic.module_id:
+        mod = db.query(Module).get(topic.module_id)
+        if mod and mod.course:
+            course = mod.course
+
+    if not course:
+        return 60, 0
+
+    as_of_date = as_of.date() if isinstance(as_of, datetime) else as_of
+    upcoming_diffs = []
+
+    for a in course.assessments:
+        if not a.start_date or not a.end_date:
+            continue
+        covered = a.covered_lectures_list
+        if topic.lecture_num not in covered:
+            continue
+
+        start_d = a.start_date.date()
+        end_d = a.end_date.date()
+
+        if as_of_date < start_d:
+            upcoming_diffs.append((start_d - as_of_date).days)
+        elif start_d <= as_of_date <= end_d:
+            upcoming_diffs.append(0)
+
+    if not upcoming_diffs:
+        return 60, 0
+
+    min_days = min(upcoming_diffs)
+    capped_days = min(min_days, 60)
+    return capped_days, 1
+
+
+def compute_topic_importances_for_course(db: Session, course_id: int):
+    from .seed_loader import compute_topic_importances_for_course as _loader_compute
+    _loader_compute(db, course_id)
 
 
 def build_feature_table(db: Session) -> pd.DataFrame:
@@ -79,6 +145,7 @@ def build_feature_table(db: Session) -> pd.DataFrame:
     rows = []
     for re in recall_events:
         key = (re.user_id, re.topic_id)
+        # Strict zero-leakage: prior learns must strictly be <= recall event timestamp
         prior_learns = [le for le in learn_by_pair.get(key, []) if le.timestamp <= re.timestamp]
         if not prior_learns:
             continue
@@ -98,6 +165,8 @@ def build_feature_table(db: Session) -> pd.DataFrame:
 
         time_spent_studying_min = sum(le.time_spent_seconds for le in prior_learns) / 60
 
+        days_to_next, has_upcoming = compute_assessment_timing(db, topic, re.timestamp)
+
         rows.append({
             "user_id": re.user_id,
             "topic_id": re.topic_id,
@@ -114,7 +183,9 @@ def build_feature_table(db: Session) -> pd.DataFrame:
             "confusability_score": _confusability_score(topic),
             "prerequisite_completion_ratio": _prereq_completion_ratio(db, re.user_id, topic, re.timestamp),
             "concurrent_topic_load": _concurrent_topic_load(db, re.user_id, re.topic_id, re.timestamp),
-            "forgot": int(not re.is_correct),   # TARGET — from self-check, never used as a feature
+            "days_to_next_assessment": days_to_next,
+            "has_upcoming_assessment": has_upcoming,
+            "forgot": int(not re.is_correct),   # TARGET — from self-check, never used as an input feature
         })
 
     return pd.DataFrame(rows)

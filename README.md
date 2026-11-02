@@ -38,6 +38,11 @@ Install everything the backend needs:
 pip install -r requirements.txt
 ```
 
+Run test suite:
+```
+pytest tests/ -v
+```
+
 Train the model (also auto-generates a synthetic bootstrap dataset the first time):
 ```
 python -m app.train

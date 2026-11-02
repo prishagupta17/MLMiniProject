@@ -81,10 +81,10 @@ def test_load_all_seeds(db_session):
     # Check assessments are loaded with dates and covered lectures
     assessments = db_session.query(Assessment).filter(Assessment.course_id == hum.id).all()
     assert len(assessments) >= 4
-    midterm = next(a for a in assessments if "Mid-Term" in a.name)
-    assert midterm.marks == 30.0
-    assert midterm.start_date is not None
-    assert midterm.covered_lectures is not None
+    quiz = next(a for a in assessments if "Quiz" in a.name)
+    assert quiz.marks == 5.0
+    assert quiz.start_date is not None
+    assert quiz.covered_lectures is not None
 
     # Check CSE 3128 topics have stripped (T1) etc
     cse3128 = db_session.query(Course).filter(Course.code == "CSE 3128").first()

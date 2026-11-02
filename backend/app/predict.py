@@ -1,16 +1,24 @@
 import os
 import joblib
 from datetime import datetime, timedelta
+from typing import Optional, Dict, Any
 import pandas as pd
 from sqlalchemy.orm import Session
 from .models import LearningEvent, Topic
-from .features import _prereq_completion_ratio, _concurrent_topic_load, _confusability_score
+from .features import (
+    FEATURE_COLUMNS,
+    _prereq_completion_ratio,
+    _concurrent_topic_load,
+    _confusability_score,
+    compute_assessment_timing,
+)
 
 MODEL_PATH = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "models", "forgetting_model.joblib"
 )
 
 _bundle = None
+MODEL_FEATURE_VERSION = "2.0"
 
 
 def _load_bundle():
@@ -22,7 +30,7 @@ def _load_bundle():
     return _bundle
 
 
-def compute_current_features(db: Session, user_id: int, topic_id: int, as_of: datetime = None):
+def compute_current_features(db: Session, user_id: int, topic_id: int, as_of: Optional[datetime] = None) -> Optional[Dict[str, Any]]:
     as_of = as_of or datetime.utcnow()
     topic = db.query(Topic).get(topic_id)
     if topic is None:
@@ -30,8 +38,11 @@ def compute_current_features(db: Session, user_id: int, topic_id: int, as_of: da
 
     learns = (
         db.query(LearningEvent)
-        .filter(LearningEvent.user_id == user_id, LearningEvent.topic_id == topic_id,
-                 LearningEvent.timestamp <= as_of)
+        .filter(
+            LearningEvent.user_id == user_id,
+            LearningEvent.topic_id == topic_id,
+            LearningEvent.timestamp <= as_of,
+        )
         .order_by(LearningEvent.timestamp)
         .all()
     )
@@ -52,6 +63,8 @@ def compute_current_features(db: Session, user_id: int, topic_id: int, as_of: da
 
     time_spent_studying_min = sum(le.time_spent_seconds for le in learns) / 60
 
+    days_to_next, has_upcoming = compute_assessment_timing(db, topic, as_of)
+
     return {
         "times_studied": times_studied,
         "is_first_exposure": is_first_exposure,
@@ -64,22 +77,33 @@ def compute_current_features(db: Session, user_id: int, topic_id: int, as_of: da
         "confusability_score": _confusability_score(topic),
         "prerequisite_completion_ratio": _prereq_completion_ratio(db, user_id, topic, as_of),
         "concurrent_topic_load": _concurrent_topic_load(db, user_id, topic_id, as_of),
+        "days_to_next_assessment": days_to_next,
+        "has_upcoming_assessment": has_upcoming,
     }
 
 
-def predict_forgetting(db: Session, user_id: int, topic_id: int):
+def predict_forgetting(db: Session, user_id: int, topic_id: int, as_of: Optional[datetime] = None):
     bundle = _load_bundle()
-    features = compute_current_features(db, user_id, topic_id)
+
+    # Feature version validation
+    model_features = bundle.get("feature_columns", [])
+    if model_features != FEATURE_COLUMNS:
+        raise RuntimeError(
+            f"Model feature mismatch: saved model was trained on {len(model_features)} features, "
+            f"but current pipeline requires {len(FEATURE_COLUMNS)} features. Retrain required."
+        )
+
+    features = compute_current_features(db, user_id, topic_id, as_of=as_of)
     if features is None:
         return None
 
-    X = pd.DataFrame([features])[bundle["feature_columns"]]
-    if bundle["scaler"] is not None:
+    X = pd.DataFrame([features])[FEATURE_COLUMNS]
+    if bundle.get("scaler") is not None:
         X = bundle["scaler"].transform(X)
     prob_forgot = float(bundle["model"].predict_proba(X)[0][1])
 
     top_factors = []
-    for feat, weight in list(bundle["importances"].items())[:5]:
+    for feat, weight in list(bundle.get("importances", {}).items())[:5]:
         top_factors.append({
             "factor": feat,
             "value": round(features[feat], 2),

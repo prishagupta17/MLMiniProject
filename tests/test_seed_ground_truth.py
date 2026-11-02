@@ -172,15 +172,24 @@ def test_assessments(ground_truth, seed_data):
     facd = seed_data["CSE 3128"]
     facd_assessments = {a["name"]: a for a in facd["assessments"]}
     assert facd_assessments["Assignment 1"]["marks"] == 10.0
-    assert "L1 - L15" in facd_assessments["Assignment 1"]["covered_lectures"]
+    cov1 = facd_assessments["Assignment 1"]["covered_lectures"]
+    assert set(range(1, 16)).issubset(set(cov1)) if isinstance(cov1, list) else "L1 - L15" in cov1
+
     assert facd_assessments["Assignment 2"]["marks"] == 5.0
-    assert "L16 - L24" in facd_assessments["Assignment 2"]["covered_lectures"]
+    cov2 = facd_assessments["Assignment 2"]["covered_lectures"]
+    assert set(range(16, 25)).issubset(set(cov2)) if isinstance(cov2, list) else "L16 - L24" in cov2
+
     assert facd_assessments["Mid-Sem"]["marks"] == 30.0
-    assert "L1 - L29" in facd_assessments["Mid-Sem"]["covered_lectures"]
+    cov_mid = facd_assessments["Mid-Sem"]["covered_lectures"]
+    assert set(range(1, 30)).issubset(set(cov_mid)) if isinstance(cov_mid, list) else "L1 - L29" in cov_mid
+
     assert facd_assessments["Assignment 3"]["marks"] == 5.0
-    assert "L30 - L42" in facd_assessments["Assignment 3"]["covered_lectures"]
+    cov3 = facd_assessments["Assignment 3"]["covered_lectures"]
+    assert set(range(30, 43)).issubset(set(cov3)) if isinstance(cov3, list) else "L30 - L42" in cov3
+
     assert facd_assessments["End-Sem"]["marks"] == 50.0
-    assert "L1 - L48" in facd_assessments["End-Sem"]["covered_lectures"]
+    cov_end = facd_assessments["End-Sem"]["covered_lectures"]
+    assert set(range(1, 49)).issubset(set(cov_end)) if isinstance(cov_end, list) else "L1 - L48" in cov_end
 
 
 def test_seed_loader_db(db_session, ground_truth):

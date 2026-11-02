@@ -1,5 +1,5 @@
 """
-Generates the 4 verified seed JSON files according to the ground truth specification.
+Generates the 4 verified seed JSON files according to the ground truth and Step 2 specification.
 """
 import os
 import json
@@ -89,11 +89,56 @@ ml_data = {
     ],
     "sdl_hours_printed_total": 48,
     "assessments": [
-        {"name": "IA1", "type": "Quiz", "marks": 5.0, "schedule": "17-29 Aug 2026", "start_date": "2026-08-17", "end_date": "2026-08-29", "covered_lectures": "1-10", "covered_chapters": "Statistical Learning and Regression"},
-        {"name": "IA2", "type": "Quiz", "marks": 5.0, "schedule": "7-21 Sep 2026", "start_date": "2026-09-07", "end_date": "2026-09-21", "covered_lectures": "11-18", "covered_chapters": "Classification and Model Evaluation"},
-        {"name": "Mid-Term", "type": "Descriptive", "marks": 30.0, "schedule": None, "start_date": None, "end_date": None, "covered_lectures": "1-20", "covered_chapters": "CO1, CO2, intro CO3"},
-        {"name": "IA3", "type": "Quiz", "marks": 5.0, "schedule": "19-31 Oct 2026", "start_date": "2026-10-19", "end_date": "2026-10-31", "covered_lectures": "19-25", "covered_chapters": "Decision Trees and SVM"},
-        {"name": "End-Sem", "type": "Descriptive", "marks": 50.0, "schedule": None, "start_date": None, "end_date": None, "covered_lectures": "1-36", "covered_chapters": "Comprehensive full syllabus"}
+        {
+            "name": "IA1",
+            "type": "Quiz",
+            "marks": 5.0,
+            "schedule": "17-29 Aug 2026",
+            "start_date": "2026-08-17",
+            "end_date": "2026-08-29",
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "IA2",
+            "type": "Quiz",
+            "marks": 5.0,
+            "schedule": "7-21 Sep 2026",
+            "start_date": "2026-09-07",
+            "end_date": "2026-09-21",
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "Mid-Term",
+            "type": "Descriptive",
+            "marks": 30.0,
+            "schedule": None,
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "IA3",
+            "type": "Quiz",
+            "marks": 5.0,
+            "schedule": "19-31 Oct 2026",
+            "start_date": "2026-10-19",
+            "end_date": "2026-10-31",
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "End-Sem",
+            "type": "Descriptive",
+            "marks": 50.0,
+            "schedule": None,
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        }
     ]
 }
 
@@ -172,11 +217,56 @@ pcap_data = {
     ],
     "sdl_hours_total": 54,
     "assessments": [
-        {"name": "Mid-Term", "type": "Descriptive", "marks": 30.0, "schedule": "25 Sep to 1 Oct 2026", "start_date": "2026-09-25", "end_date": "2026-10-01", "covered_lectures": "1-17", "covered_chapters": "OpenMP and MPI theory and lab"},
-        {"name": "Continuous Lab Evaluation", "type": "Lab", "marks": 8.0, "schedule": "Respective Labs", "start_date": None, "end_date": None, "covered_lectures": "6-36", "covered_chapters": "OpenMP, MPI, CUDA"},
-        {"name": "Lab Exam", "type": "Lab", "marks": 4.0, "schedule": "Lab 8 or Lab 9", "start_date": None, "end_date": None, "covered_lectures": "6-27", "covered_chapters": "OpenMP, MPI, CUDA"},
-        {"name": "Mini Project", "type": "Project", "marks": 8.0, "schedule": "Lab 5, 10, 12", "start_date": None, "end_date": None, "covered_lectures": "1-36", "covered_chapters": "OpenMP, MPI, CUDA"},
-        {"name": "End-Sem", "type": "Descriptive", "marks": 50.0, "schedule": None, "start_date": None, "end_date": None, "covered_lectures": "1-36", "covered_chapters": "Comprehensive full syllabus"}
+        {
+            "name": "Mid-Term",
+            "type": "Descriptive",
+            "marks": 30.0,
+            "schedule": "25 Sep to 1 Oct 2026",
+            "start_date": "2026-09-25",
+            "end_date": "2026-10-01",
+            "covered_lectures": list(range(1, 18)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "Continuous Lab Evaluation",
+            "type": "Lab",
+            "marks": 8.0,
+            "schedule": "Respective Labs",
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": [],
+            "coverage_assumed": False
+        },
+        {
+            "name": "Lab Exam",
+            "type": "Lab",
+            "marks": 4.0,
+            "schedule": "Lab 8 or Lab 9",
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": [],
+            "coverage_assumed": False
+        },
+        {
+            "name": "Mini Project",
+            "type": "Project",
+            "marks": 8.0,
+            "schedule": "Lab 5, 10, 12",
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": [],
+            "coverage_assumed": False
+        },
+        {
+            "name": "End-Sem",
+            "type": "Descriptive",
+            "marks": 50.0,
+            "schedule": None,
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        }
     ]
 }
 
@@ -243,11 +333,58 @@ eom_data = {
     "sdl_hours_printed_total": 54,
     "sdl_rows_sum": 56,
     "assessments": [
-        {"name": "Quiz1", "type": "Quiz", "marks": 5.0, "schedule": "17-29 Aug 2026", "start_date": "2026-08-17", "end_date": "2026-08-29", "covered_lectures": "1-8", "covered_chapters": "Chapter 1 Full, Chapter 2 up to Steps in Planning"},
-        {"name": "Mid-Term", "type": "Descriptive", "marks": 30.0, "schedule": "25 Sep to 1 Oct 2026", "start_date": "2026-09-25", "end_date": "2026-10-01", "covered_lectures": "1-21", "covered_chapters": "Chapter 1 Full, Chapter 2 Full, Chapter 3 up to Methods of Departmentation"},
-        {"name": "Quiz2", "type": "Quiz", "marks": 5.0, "schedule": "7-21 Sep 2026", "start_date": "2026-09-07", "end_date": "2026-09-21", "covered_lectures": "18-28", "covered_chapters": "Chapter 3 & Chapter 4"},
-        {"name": "Term Project", "type": "Project", "marks": 10.0, "schedule": "Report 4 Oct 2026, presentation from 19 Oct 2026", "start_date": "2026-10-04", "end_date": "2026-10-19", "report_date": "4 Oct 2026", "presentation_date": "19 Oct 2026", "covered_lectures": "1-36", "covered_chapters": "Chapters 1,2,3,4,5"},
-        {"name": "End-Sem", "type": "Descriptive", "marks": 50.0, "schedule": None, "start_date": None, "end_date": None, "covered_lectures": "1-36", "covered_chapters": "Comprehensive full syllabus"}
+        {
+            "name": "Quiz 1",
+            "type": "Quiz",
+            "marks": 5.0,
+            "schedule": "17-29 Aug 2026",
+            "start_date": "2026-08-17",
+            "end_date": "2026-08-29",
+            "covered_lectures": list(range(1, 10)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "Mid-Term",
+            "type": "Descriptive",
+            "marks": 30.0,
+            "schedule": None,
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": list(range(1, 22)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "Quiz 2",
+            "type": "Quiz",
+            "marks": 5.0,
+            "schedule": "7-21 Sep 2026",
+            "start_date": "2026-09-07",
+            "end_date": "2026-09-21",
+            "covered_lectures": list(range(18, 29)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "Term Project",
+            "type": "Project",
+            "marks": 10.0,
+            "schedule": "Report 4 Oct 2026, presentation from 19 Oct 2026",
+            "start_date": "2026-10-04",
+            "end_date": "2026-10-19",
+            "report_date": "4 Oct 2026",
+            "presentation_date": "19 Oct 2026",
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        },
+        {
+            "name": "End-Sem",
+            "type": "Descriptive",
+            "marks": 50.0,
+            "schedule": None,
+            "start_date": None,
+            "end_date": None,
+            "covered_lectures": list(range(1, 37)),
+            "coverage_assumed": True
+        }
     ]
 }
 
@@ -334,11 +471,56 @@ facd_data = {
     ],
     "sdl_hours_total": 72,
     "assessments": [
-        {"name": "Assignment 1", "type": "Surprise test", "marks": 10.0, "covered_lectures": "L1 - L15", "schedule": "17 Aug 2026 - 29 Aug 2026", "start_date": "2026-08-17", "end_date": "2026-08-29"},
-        {"name": "Assignment 2", "type": "Quiz", "marks": 5.0, "covered_lectures": "L16 - L24", "schedule": "7 Sep 2026 - 21 Sep 2026", "start_date": "2026-09-07", "end_date": "2026-09-21"},
-        {"name": "Mid-Sem", "type": "Descriptive", "marks": 30.0, "covered_lectures": "L1 - L29", "schedule": "25 Sep 2026 to 1 Oct 2026", "start_date": "2026-09-25", "end_date": "2026-10-01"},
-        {"name": "Assignment 3", "type": "Quiz", "marks": 5.0, "covered_lectures": "L30 - L42", "schedule": "19 Oct 2026 - 31 Oct 2026", "start_date": "2026-10-19", "end_date": "2026-10-31"},
-        {"name": "End-Sem", "type": "Descriptive", "marks": 50.0, "covered_lectures": "L1 - L48", "schedule": "14 Nov 2026 - 28 Nov 2026", "start_date": "2026-11-14", "end_date": "2026-11-28"}
+        {
+            "name": "Assignment 1",
+            "type": "Surprise test",
+            "marks": 10.0,
+            "covered_lectures": list(range(1, 16)),
+            "schedule": "17 Aug 2026 - 29 Aug 2026",
+            "start_date": "2026-08-17",
+            "end_date": "2026-08-29",
+            "coverage_assumed": False
+        },
+        {
+            "name": "Assignment 2",
+            "type": "Quiz",
+            "marks": 5.0,
+            "covered_lectures": list(range(16, 25)),
+            "schedule": "7 Sep 2026 - 21 Sep 2026",
+            "start_date": "2026-09-07",
+            "end_date": "2026-09-21",
+            "coverage_assumed": False
+        },
+        {
+            "name": "Mid-Sem",
+            "type": "Descriptive",
+            "marks": 30.0,
+            "covered_lectures": list(range(1, 30)),
+            "schedule": "25 Sep 2026 to 1 Oct 2026",
+            "start_date": "2026-09-25",
+            "end_date": "2026-10-01",
+            "coverage_assumed": False
+        },
+        {
+            "name": "Assignment 3",
+            "type": "Quiz",
+            "marks": 5.0,
+            "covered_lectures": list(range(30, 43)),
+            "schedule": "19 Oct 2026 - 31 Oct 2026",
+            "start_date": "2026-10-19",
+            "end_date": "2026-10-31",
+            "coverage_assumed": False
+        },
+        {
+            "name": "End-Sem",
+            "type": "Descriptive",
+            "marks": 50.0,
+            "covered_lectures": list(range(1, 49)),
+            "schedule": "14 Nov 2026 - 28 Nov 2026",
+            "start_date": "2026-11-14",
+            "end_date": "2026-11-28",
+            "coverage_assumed": False
+        }
     ]
 }
 
@@ -355,4 +537,4 @@ with open("backend/seed/HUM3022.json", "w", encoding="utf-8") as f:
 with open("backend/seed/CSE3128.json", "w", encoding="utf-8") as f:
     json.dump(facd_data, f, indent=2, ensure_ascii=False)
 
-print("Generated all 4 seed JSON files.")
+print("Regenerated all 4 seed JSON files with covered_lectures and coverage_assumed.")
