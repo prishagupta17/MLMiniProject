@@ -1,0 +1,113 @@
+{
+  "courses": {
+    "ML": {
+      "code": "CSE 3148",
+      "name": "Machine Learning",
+      "num_outcomes": 5,
+      "outcome_marks": [22, 35, 15, 14, 14],
+      "num_lectures": 36,
+      "lecture_co_ranges": {
+        "CO1": [1, 6],
+        "CO2": [7, 18],
+        "CO3": [19, 25],
+        "CO5_part1": [26, 31],
+        "CO4": [32, 35],
+        "CO5_part2": [36, 36]
+      },
+      "num_lab_weeks": 12,
+      "num_sdl_rows": 11,
+      "sdl_hours_printed_total": 48,
+      "assessments": {
+        "IA1": {"schedule": "17-29 Aug 2026"},
+        "IA2": {"schedule": "7-21 Sep 2026"},
+        "IA3": {"schedule": "19-31 Oct 2026"},
+        "Mid-Term": {"marks": 30.0, "dates": null},
+        "End-Sem": {"marks": 50.0, "dates": null}
+      },
+      "spot_checks": [
+        {"lecture": 17, "contains": "Naive Bayes", "co": "CO2"}
+      ]
+    },
+    "PCAP": {
+      "code": "CSE 3129",
+      "name": "Parallel Computer Architecture and Programming",
+      "num_outcomes": 6,
+      "outcome_marks": [14, 17, 17, 27, 20, 5],
+      "contact_hours": [5, 6, 6, 10, 9, null],
+      "num_lectures": 36,
+      "lecture_co_ranges": {
+        "CO1": [1, 5],
+        "CO2": [6, 11],
+        "CO3": [12, 17],
+        "CO4": [18, 27],
+        "CO5": [28, 36]
+      },
+      "num_sdl_rows": 16,
+      "sdl_hours_total": 54,
+      "assessments": {
+        "Mid-Term": {"marks": 30.0, "schedule": "25 Sep to 1 Oct 2026"},
+        "End-Sem": {"marks": 50.0}
+      },
+      "spot_checks": [
+        {"lecture": 11, "contains": "Scheduling (static, dynamic, guided)", "co": "CO2"}
+      ]
+    },
+    "EOM": {
+      "code": "HUM 3022",
+      "name": "Essentials of Management",
+      "num_outcomes": 5,
+      "outcome_marks": [23, 22, 19, 17, 19],
+      "contact_hours": [8, 9, 6, 5, 8],
+      "num_lectures": 36,
+      "lecture_co_ranges": {
+        "CO1": [1, 8],
+        "CO2": [9, 17],
+        "CO3": [18, 23],
+        "CO4": [24, 28],
+        "CO5": [29, 36]
+      },
+      "num_sdl_rows": 3,
+      "sdl_row_hours": [32, 16, 8],
+      "sdl_hours_printed_total": 54,
+      "sdl_rows_sum": 56,
+      "assessments": {
+        "Quiz1": {"schedule": "17-29 Aug 2026"},
+        "Mid-Term": {"marks": 30.0},
+        "Quiz2": {"schedule": "7-21 Sep 2026"},
+        "Term Project": {"report_date": "4 Oct 2026", "presentation_date": "19 Oct 2026"},
+        "End-Sem": {"marks": 50.0}
+      },
+      "spot_checks": [
+        {"lecture": 30, "contains": "Maslow", "co": "CO5"}
+      ]
+    },
+    "FACD": {
+      "code": "CSE 3128",
+      "name": "Finite Automata and Compiler Design",
+      "num_outcomes": 6,
+      "outcome_marks": [30, 12, 33, 8, 12, 5],
+      "contact_hours": [16, 5, 16, 3, 6, 2],
+      "num_lectures": 48,
+      "lecture_co_ranges": {
+        "CO1": [1, 16],
+        "CO2": [17, 21],
+        "CO3": [22, 37],
+        "CO4": [38, 40],
+        "CO5": [41, 46],
+        "CO6": [47, 48]
+      },
+      "num_sdl_rows": 12,
+      "sdl_hours_total": 72,
+      "assessments": {
+        "Assignment 1": {"marks": 10.0, "covered_lectures": "L1 - L15", "schedule": "17 Aug 2026 - 29 Aug 2026"},
+        "Assignment 2": {"marks": 5.0, "covered_lectures": "L16 - L24", "schedule": "7 Sep 2026 - 21 Sep 2026"},
+        "Mid-Sem": {"marks": 30.0, "covered_lectures": "L1 - L29", "schedule": "25 Sep 2026 to 1 Oct 2026"},
+        "Assignment 3": {"marks": 5.0, "covered_lectures": "L30 - L42", "schedule": "19 Oct 2026 - 31 Oct 2026"},
+        "End-Sem": {"marks": 50.0, "covered_lectures": "L1 - L48", "schedule": "14 Nov 2026 - 28 Nov 2026"}
+      },
+      "spot_checks": [
+        {"lecture": 29, "contains": "Bottom-Up Parsing", "co": "CO3"}
+      ]
+    }
+  }
+}

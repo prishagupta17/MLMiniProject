@@ -1,0 +1,406 @@
+{
+  "course_info": {
+    "code": "CSE 3148",
+    "name": "Machine Learning",
+    "credits": 4,
+    "semester": "Odd",
+    "academic_year": "2026-2027"
+  },
+  "outcomes": [
+    {
+      "code": "CO1",
+      "statement": "Apply basic concepts of Statistical Learning",
+      "hours": 15,
+      "marks": 22
+    },
+    {
+      "code": "CO2",
+      "statement": "Apply Linear Regression and classification",
+      "hours": 26,
+      "marks": 35
+    },
+    {
+      "code": "CO3",
+      "statement": "Use decision trees for classification",
+      "hours": 11,
+      "marks": 15
+    },
+    {
+      "code": "CO4",
+      "statement": "Use support vector machines for classification and regression",
+      "hours": 10,
+      "marks": 14
+    },
+    {
+      "code": "CO5",
+      "statement": "Apply unsupervised learning methods for clustering",
+      "hours": 10,
+      "marks": 14
+    }
+  ],
+  "lesson_plan": [
+    {
+      "lecture_num": 1,
+      "name": "An Overview of Statistical Learning, A Brief History of Statistical Learning, Notation and Simple Matrix Algebra",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 2,
+      "name": "Statistical Learning: What is Statistical Learning?, Why Estimate f ?, How Do We Estimate f ?",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 3,
+      "name": "Parametric Methods and Non- Parametric Methods",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 4,
+      "name": "The Trade-Off Between Prediction Accuracy and Model Interpretability, Supervised Versus Unsupervised Learning, Regression Versus Classification Problems",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 5,
+      "name": "Assessing Model Accuracy, Measuring the Quality of Fit, The Bias-Variance Trade-Off",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 6,
+      "name": "The Classification Setting, The Bayes Classifier, K-NearestNeighbors [Overfit, Underfit]",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 7,
+      "name": "Linear Regression: Simple Linear Regression, Estimating the Coefficients, Assessing the Accuracy of the Model, Problem on Simple Linear Regression",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 8,
+      "name": "Normal Method, Gradient Descent Method, Normal Equation Method vs Gradient Descent Method",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 9,
+      "name": "R2 Statistic, Multiple Linear Regression, Some Important Questions, Problems on Multiple Linear Regression",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 10,
+      "name": "One: Is There a Relationship Between the Response and Predictors?, Two: Deciding on Important Variables, Three: Model Fit, Four: Predictions",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 11,
+      "name": "Other Considerations in the Regression Model: Qualitative Predictors, Predictors with Only Two Levels, Qualitative Predictors with More than Two Levels",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 12,
+      "name": "Extensions of the Linear Model, Removing the Additive Assumption, Non-linear Relationships, Problems on Non-linear Relationships -Polynomial",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 13,
+      "name": "Classification: An Overview of Classification, Why Not Linear Regression?, Logistic Regression, Sigmoid Function, Problems on Logistic Regression",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 14,
+      "name": "The Logistic Model, Estimating the Regression Coefficients, Making Predictions, Multinomial Logistic Regression",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 15,
+      "name": "Cost Function, STOCHASTIC GRADIENT DESCENT",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 16,
+      "name": "Performance metrics: Confusion Matrix, Precision and Recall & ROC curve",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 17,
+      "name": "BAYESIAN REASONING: Bayes Theorem and Problems, Naive Bayes Classifier",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 18,
+      "name": "K-Nearest Neighbour Classifier, Comparison of Linear Regression with K-Nearest Neighbors",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 19,
+      "name": "Well-posed machine learning problems, examples of applications indiverse fields",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 20,
+      "name": "Data representation: Time Series Forecasting, Datasets for Toy (Unrealistically Simple) and Realistic Problems",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 21,
+      "name": "Tree-Based Methods: The Basics of Decision Trees, Example of a Classification",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 22,
+      "name": "DECISION TREES: Introduction, Example of a Classification Decision Tree",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 23,
+      "name": "ID3, C4.5",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 24,
+      "name": "CART Decision Trees",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 25,
+      "name": "Pruning the Tree, Strengths and Weaknesses of Decision Tree Approach",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 26,
+      "name": "Unsupervised Learning: The Challenge of Unsupervised Learning, Principal Components Analysis",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 27,
+      "name": "Applications of PCA, Computing PCA, Problems",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 28,
+      "name": "Missing Values and Matrix Completion",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 29,
+      "name": "Clustering Methods, K-Means Clustering, Problems",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 30,
+      "name": "Hierarchical Clustering, Problems",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 31,
+      "name": "Practical Issues in Clustering",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 32,
+      "name": "Support Vector Machines: Maximal Margin Classifier- What Is a Hyperplane?, Classification Using a Separating Hyperplane",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 33,
+      "name": "The Maximal Margin Classifier, Construction of the Maximal Margin Classifier",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 34,
+      "name": "Support Vector Classifiers-Overview of the Support Vector Classifier, Details of the Support Vector Classifier Numerical examples",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 35,
+      "name": "Support Vector Machines-Classification with Non-Linear Decision Boundaries, The Support Vector Machine, An Application to the Heart Disease Data Numerical examples",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 36,
+      "name": "Rationale, Generating Diverse Learners, Voting, Error-Correcting Output Codes, Bagging, Boosting",
+      "co_code": "CO5"
+    }
+  ],
+  "lab_weeks": [
+    {
+      "week": 1,
+      "topic": "Working with numpy, scipy, and CSV file format",
+      "co_code": "CO1"
+    },
+    {
+      "week": 2,
+      "topic": "Data Analysis and visualisation with Python",
+      "co_code": "CO1"
+    },
+    {
+      "week": 3,
+      "topic": "Data-Preprocessing and Regression Techniques",
+      "co_code": "CO1"
+    },
+    {
+      "week": 4,
+      "topic": "Parametric methods",
+      "co_code": "CO2"
+    },
+    {
+      "week": 5,
+      "topic": "LOGISTIC REGRESSION AND STOCHASTIC GRADIENT DESCENT",
+      "co_code": "CO2"
+    },
+    {
+      "week": 6,
+      "topic": "Cost Function",
+      "co_code": "CO2"
+    },
+    {
+      "week": 7,
+      "topic": "Naïve Bayes Classifier",
+      "co_code": "CO2"
+    },
+    {
+      "week": 8,
+      "topic": "K-Nearest Neighbour classifier",
+      "co_code": "CO2"
+    },
+    {
+      "week": 9,
+      "topic": "Decision Tree - C4.5 and CART",
+      "co_code": "CO3"
+    },
+    {
+      "week": 10,
+      "topic": "Data Clustering K-means and hierarchical",
+      "co_code": "CO5"
+    },
+    {
+      "week": 11,
+      "topic": "Support Vector Machine",
+      "co_code": "CO4"
+    },
+    {
+      "week": 12,
+      "topic": "Mini-project",
+      "co_code": "CO3"
+    }
+  ],
+  "sdl_items": [
+    {
+      "sl_no": 1,
+      "topic": "Machine Learning With Python",
+      "hours": 8,
+      "co_code": "CO1"
+    },
+    {
+      "sl_no": 2,
+      "topic": "Machine Learning Foundations Course – Regression Analysis",
+      "hours": 6,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 3,
+      "topic": "Stochastic Gradient Descent",
+      "hours": 4,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 4,
+      "topic": "Generative Models for Classification",
+      "hours": 4,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 5,
+      "topic": "Principal Component Analysis",
+      "hours": 4,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 6,
+      "topic": "Naive Bayes Case Studies",
+      "hours": 4,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 7,
+      "topic": "K-Nearest Neighbors (K-NN) Case Studies",
+      "hours": 4,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 7,
+      "topic": "Decision Tree Case Studies",
+      "hours": 4,
+      "co_code": "CO3"
+    },
+    {
+      "sl_no": 8,
+      "topic": "Support Vector Machine (SVM) case studies",
+      "hours": 4,
+      "co_code": "CO4"
+    },
+    {
+      "sl_no": 9,
+      "topic": "Clustering (K-Means, Hierarchical Clustering, DBSCAN) case studies",
+      "hours": 4,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 10,
+      "topic": "COMBINING MULTIPLE LEARNERS: Rationale, Generating Diverse Learners, Voting, Bagging, Boosting",
+      "hours": 2,
+      "co_code": "CO5"
+    }
+  ],
+  "sdl_hours_printed_total": 48,
+  "assessments": [
+    {
+      "name": "IA1",
+      "type": "Quiz",
+      "marks": 5.0,
+      "schedule": "17-29 Aug 2026",
+      "start_date": "2026-08-17",
+      "end_date": "2026-08-29",
+      "covered_lectures": "1-10",
+      "covered_chapters": "Statistical Learning and Regression"
+    },
+    {
+      "name": "IA2",
+      "type": "Quiz",
+      "marks": 5.0,
+      "schedule": "7-21 Sep 2026",
+      "start_date": "2026-09-07",
+      "end_date": "2026-09-21",
+      "covered_lectures": "11-18",
+      "covered_chapters": "Classification and Model Evaluation"
+    },
+    {
+      "name": "Mid-Term",
+      "type": "Descriptive",
+      "marks": 30.0,
+      "schedule": null,
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "1-20",
+      "covered_chapters": "CO1, CO2, intro CO3"
+    },
+    {
+      "name": "IA3",
+      "type": "Quiz",
+      "marks": 5.0,
+      "schedule": "19-31 Oct 2026",
+      "start_date": "2026-10-19",
+      "end_date": "2026-10-31",
+      "covered_lectures": "19-25",
+      "covered_chapters": "Decision Trees and SVM"
+    },
+    {
+      "name": "End-Sem",
+      "type": "Descriptive",
+      "marks": 50.0,
+      "schedule": null,
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "1-36",
+      "covered_chapters": "Comprehensive full syllabus"
+    }
+  ]
+}

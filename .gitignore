@@ -1,0 +1,9 @@
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/*.db
+backend/.env
+backend/models/*.joblib
+backend/seed/scratch/
+.pytest_cache/
+__pycache__/

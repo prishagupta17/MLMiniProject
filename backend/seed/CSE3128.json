@@ -1,0 +1,411 @@
+{
+  "course_info": {
+    "code": "CSE 3128",
+    "name": "Finite Automata and Compiler Design",
+    "credits": 4,
+    "semester": "V",
+    "academic_year": "2026-2027"
+  },
+  "outcomes": [
+    {
+      "code": "CO1",
+      "statement": "Design grammars and automata for regular languages using the knowledge of grammars, languages, and automata",
+      "hours": 16,
+      "marks": 30
+    },
+    {
+      "code": "CO2",
+      "statement": "Identify the steps involved in lexical analyzer generators by familiarizing the different phases of a compiler",
+      "hours": 5,
+      "marks": 12
+    },
+    {
+      "code": "CO3",
+      "statement": "Evaluate the top-down and bottom-up parsing techniques by comparing their effectiveness in various computational contexts",
+      "hours": 16,
+      "marks": 33
+    },
+    {
+      "code": "CO4",
+      "statement": "Analyze Syntax Directed Translation (SDT) techniques",
+      "hours": 3,
+      "marks": 8
+    },
+    {
+      "code": "CO5",
+      "statement": "Analyze expressions to generate appropriate three address code",
+      "hours": 6,
+      "marks": 12
+    },
+    {
+      "code": "CO6",
+      "statement": "Apply automated tools such as FLEX and YACC for lexical analysis and parser generation",
+      "hours": 2,
+      "marks": 5
+    }
+  ],
+  "lesson_plan": [
+    {
+      "lecture_num": 1,
+      "name": "Three basic concepts: Languages and It's Operations",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 2,
+      "name": "Grammar and Automata",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 3,
+      "name": "Deterministic Finite Accepters, Languages and Dfa's, Regular Languages",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 4,
+      "name": "Problems on Deterministic Finite Accepter",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 5,
+      "name": "Nondeterministic Finite Accepters- Definition of a Nondeterministic Accepter, Why Nondeterminism",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 6,
+      "name": "Equivalence of Deterministic and Nondeterministic Finite Accepters",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 7,
+      "name": "Reduction of the Number of States in Finite Automata",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 8,
+      "name": "Regular Expressions- Formal Definition of a Regular Expression, Languages Associated with Regular Expressions and examples",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 9,
+      "name": "Connection between Regular Expressions and Regular Languages, Regular Expressions Denote Regular Languages, Regular Expressions for Regular Languages, Regular Expressions for Describing Simple Patterns",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 10,
+      "name": "Regular Grammars-Equivalence of Regular Languages and Regular Grammars",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 11,
+      "name": "Identifying Non-regular Languages and Context-Free grammar",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 12,
+      "name": "Examples on Context-Free grammar",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 13,
+      "name": "Leftmost and Rightmost Derivations, Derivation Trees, Relation Between Sentential Forms and Derivation Trees, Parsing and Ambiguity- Ambiguity in Grammars and Languages",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 14,
+      "name": "Nondeterministic Pushdown Automata- Definition of a Pushdown Automaton, The Language Accepted by a Pushdown Automaton",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 15,
+      "name": "Examples on Nondeterministic Pushdown Automata",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 16,
+      "name": "Examples Pushdown Automata and Context-Free Languages",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 17,
+      "name": "Introduction to Language Processors, Structure of Compiler",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 18,
+      "name": "The Role of the Lexical Analyzer",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 19,
+      "name": "Input Buffering",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 20,
+      "name": "Examples on Specifications and Recognition of Tokens",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 21,
+      "name": "Problems on Transition-Diagram-Based Lexical Analyzer",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 22,
+      "name": "Syntax Analysis - Introduction",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 23,
+      "name": "Writing a Grammar- Lexical versus Syntactic Analysis",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 24,
+      "name": "Problems on Eliminating Ambiguity and Left Recursion, Left Factoring",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 25,
+      "name": "Top-Down Parsing - Recursive-Descent Parsers",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 26,
+      "name": "First and Follow(1), LL(1) Grammars",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 27,
+      "name": "Non-recursive Predictive Parsing",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 28,
+      "name": "Examples on First and Follow(1), LL(1) Grammars, Non-recursive Predictive Parsing",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 29,
+      "name": "Bottom-Up Parsing - Reductions, Handle Pruning",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 30,
+      "name": "Shift-Reduce Parsing, Introduction to LR parsing- Simple LR, Why LR Parsers?",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 31,
+      "name": "Items and LR (0) Automaton, The LR-Parsing Algorithm",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 32,
+      "name": "Problems on Constructing SLR-Parsing Tables",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 33,
+      "name": "Examples on LR parsing",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 34,
+      "name": "More Powerful LR parsers- Canonical LR (1) Items",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 35,
+      "name": "Constructing LR(1) Sets of Items, Canonical LR(1) Parsing Tables",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 36,
+      "name": "Examples on Canonical LR(1) Parsing Tables",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 37,
+      "name": "Conflicts During Shift-Reduce Parsing, Using Ambiguous Grammars-Precedence and Associativity to Resolve Conflicts",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 38,
+      "name": "Syntax-Directed Translation - Syntax-Directed Definitions, Evaluation Order for SDD's- Dependency Graphs, Ordering the Evaluation of Attributes",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 39,
+      "name": "Applications of Syntax-Directed Translation, Construction of Syntax Trees",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 40,
+      "name": "Examples on Syntax-Directed Definitions, Dependency Graphs",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 41,
+      "name": "Intermediate-Code Generation - Variants of Syntax Trees, Directed Acyclic Graph for Expressions, The Value Number Method for Constructing DAGs, Three-Address Code, Addresses and Instructions, Quadruples, Triples, Static Single Assignment Form",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 42,
+      "name": "Problems on Three Address Code",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 43,
+      "name": "Code Generation - Issues in Design of Code Generator",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 44,
+      "name": "Examples on Three Address code and Target Language Representation",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 45,
+      "name": "Basic Blocks and Flow Graphs and Some Examples",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 46,
+      "name": "The DAG Representation of Basic Blocks, Finding Local Common Subexpressions, Dead Code Elimination, Peephole Optimization",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 47,
+      "name": "Theory of FLEX- Structure of a FLEX program, Regular Expression, FLEX library functions",
+      "co_code": "CO6"
+    },
+    {
+      "lecture_num": 48,
+      "name": "Theory of YACC- YACC Symbols, Symbol values, Symbol Types, YACC Library, Some Example Program",
+      "co_code": "CO6"
+    }
+  ],
+  "sdl_items": [
+    {
+      "sl_no": 1,
+      "topic": "Formal Languages, Finite Automata and Pushdown Automata using NPTEL",
+      "hours": 6,
+      "co_code": "CO1"
+    },
+    {
+      "sl_no": 2,
+      "topic": "Automata Design and Language Conversion using JFLAP",
+      "hours": 6,
+      "co_code": "CO1"
+    },
+    {
+      "sl_no": 3,
+      "topic": "Building a Lexical Analyzer using Flex",
+      "hours": 6,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 4,
+      "topic": "Advanced Tokenization and Unicode Support in Modern Compilers",
+      "hours": 6,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 5,
+      "topic": "Parser Generation using ANTLR",
+      "hours": 6,
+      "co_code": "CO3"
+    },
+    {
+      "sl_no": 6,
+      "topic": "Modern Syntax Error Detection and Recovery in Parser Generators",
+      "hours": 6,
+      "co_code": "CO3"
+    },
+    {
+      "sl_no": 7,
+      "topic": "Attribute Grammar Systems and Incremental Semantic Analysis",
+      "hours": 6,
+      "co_code": "CO4"
+    },
+    {
+      "sl_no": 8,
+      "topic": "Building a Domain-Specific Language (DSL) using ANTLR with Semantic Actions",
+      "hours": 6,
+      "co_code": "CO4"
+    },
+    {
+      "sl_no": 9,
+      "topic": "LLVM Intermediate Representation (LLVM IR) and Modern Compiler Optimization",
+      "hours": 6,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 10,
+      "topic": "Machine-Independent Compiler Optimizations using Static Analysis",
+      "hours": 6,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 11,
+      "topic": "Case Study – Building a Calculator using Flex and GNU Bison",
+      "hours": 6,
+      "co_code": "CO6"
+    },
+    {
+      "sl_no": 12,
+      "topic": "Research Survey – The Deep Learning Compiler: A Comprehensive Survey",
+      "hours": 6,
+      "co_code": "CO6"
+    }
+  ],
+  "sdl_hours_total": 72,
+  "assessments": [
+    {
+      "name": "Assignment 1",
+      "type": "Surprise test",
+      "marks": 10.0,
+      "covered_lectures": "L1 - L15",
+      "schedule": "17 Aug 2026 - 29 Aug 2026",
+      "start_date": "2026-08-17",
+      "end_date": "2026-08-29"
+    },
+    {
+      "name": "Assignment 2",
+      "type": "Quiz",
+      "marks": 5.0,
+      "covered_lectures": "L16 - L24",
+      "schedule": "7 Sep 2026 - 21 Sep 2026",
+      "start_date": "2026-09-07",
+      "end_date": "2026-09-21"
+    },
+    {
+      "name": "Mid-Sem",
+      "type": "Descriptive",
+      "marks": 30.0,
+      "covered_lectures": "L1 - L29",
+      "schedule": "25 Sep 2026 to 1 Oct 2026",
+      "start_date": "2026-09-25",
+      "end_date": "2026-10-01"
+    },
+    {
+      "name": "Assignment 3",
+      "type": "Quiz",
+      "marks": 5.0,
+      "covered_lectures": "L30 - L42",
+      "schedule": "19 Oct 2026 - 31 Oct 2026",
+      "start_date": "2026-10-19",
+      "end_date": "2026-10-31"
+    },
+    {
+      "name": "End-Sem",
+      "type": "Descriptive",
+      "marks": 50.0,
+      "covered_lectures": "L1 - L48",
+      "schedule": "14 Nov 2026 - 28 Nov 2026",
+      "start_date": "2026-11-14",
+      "end_date": "2026-11-28"
+    }
+  ]
+}

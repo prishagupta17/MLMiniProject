@@ -1,0 +1,380 @@
+{
+  "course_info": {
+    "code": "CSE 3129",
+    "name": "Parallel Computer Architecture and Programming",
+    "credits": 4,
+    "semester": "V",
+    "academic_year": "2026-2027"
+  },
+  "outcomes": [
+    {
+      "code": "CO1",
+      "statement": "Demonstrate a fundamental understanding of architecture-level support for parallelization and programming paradigms",
+      "hours": 5,
+      "marks": 14
+    },
+    {
+      "code": "CO2",
+      "statement": "Design and implement shared memory programs using OpenMP",
+      "hours": 6,
+      "marks": 17
+    },
+    {
+      "code": "CO3",
+      "statement": "Design and implement distributed memory programs using MPI",
+      "hours": 6,
+      "marks": 17
+    },
+    {
+      "code": "CO4",
+      "statement": "Design and construct CUDA programs using GPU architecture",
+      "hours": 10,
+      "marks": 27
+    },
+    {
+      "code": "CO5",
+      "statement": "Design optimized parallel solutions using thread and memory organization in CUDA",
+      "hours": 9,
+      "marks": 20
+    },
+    {
+      "code": "CO6",
+      "statement": "Applying Parallel Programming Concepts to Applications",
+      "hours": null,
+      "marks": 5
+    }
+  ],
+  "lesson_plan": [
+    {
+      "lecture_num": 1,
+      "name": "Introduction to Parallel Computing : Need of Parallelism; Forms of Parallelism, Flynn's taxonomy: SISD, SIMD, MISD, MIMD",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 2,
+      "name": "Moore's Law and Multicore; Amdahl's Law",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 3,
+      "name": "Speedup and performance; Programming paradigms: Comparison between Shared and Distributed Memory Programming Paradigms",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 4,
+      "name": "Introduction to Parallel Random Access Machine (PRAM) Architecture Model: Characteristics of PRAM Models; Types of PRAM Models",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 5,
+      "name": "Introduction to Parallel Random Access Machine (PRAM) Architecture Model: Advantages and Limitations of PRAM Models",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 6,
+      "name": "Shared Memory Programming Using OpenMP: Introduction to OpenMP: What is OpenMP?, Shared-memory programming: Advantages and limitations, OpenMP programming model",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 7,
+      "name": "Fork-join execution and thread-based parallelism, Compiling OpenMP Programs: Enabling OpenMP and Running programs, OpenMP Compiler Directives: parallel, for, sections, single, master",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 8,
+      "name": "Data Sharing: Shared variables; Private variables; firstprivate; lastprivate; reduction",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 9,
+      "name": "Synchronization: Barrier; Critical sections; Atomic operations. Runtime Functions: omp_get_thread_num(); omp_get_num_threads(); omp_set_num_threads(); omp_get_wtime(). Environment Variables: OMP_NUM_THREADS; OMP_SCHEDULE; OMP_DYNAMIC",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 10,
+      "name": "Work Sharing: for directive; sections; single; Combined Parallel and Work-sharing constructs",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 11,
+      "name": "Scheduling (static, dynamic, guided)",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 12,
+      "name": "Distributed Memory Programming Using MPI: Message-Passing Programming, MPI Basics and Introduction to Distributed-Memory Architectures",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 13,
+      "name": "Foundational Concepts of the MPI Standard; Compiling and Running MPI Programs",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 14,
+      "name": "Point-to-Point Communication: Send/Recv Between Two Processes; Synchronous and Buffered Send",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 15,
+      "name": "Collective Communication: Broadcast, Scatter, Gather and Reduce Operations",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 16,
+      "name": "Collective Data Movement and Reduction; Introduction to Allgather and Alltoall",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 17,
+      "name": "Measuring the Execution Time of MPI Programs; MPI Error-Handling Functions",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 18,
+      "name": "Accelerated Programming Using GPU: GPU Architecture-Transition from CPU to GPU",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 19,
+      "name": "Architecture of a Modern GPU",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 20,
+      "name": "CUDA Program Structure and Vector-Vector Addition",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 21,
+      "name": "Device Global Memory and Data Transfer",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 22,
+      "name": "CUDA Kernel Functions and Threads",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 23,
+      "name": "CUDA Thread Organization",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 24,
+      "name": "Assigning Resources to Blocks and Querying Device Properties",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 25,
+      "name": "Sequential and Parallel 1D Convolution",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 26,
+      "name": "Sequential Sparse Matrix-Vector Multiplication and Parallel SpMV Using CSR",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 27,
+      "name": "CUDA Atomic and Arithmetic Functions",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 28,
+      "name": "High-Performance GPU Programming Using Optimizations: Introduction to GPU Performance Optimization",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 29,
+      "name": "Mapping Threads to Multidimensional Data",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 30,
+      "name": "Matrix-Matrix Multiplication: A More Complex CUDA Kernel",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 31,
+      "name": "Synchronization and Transparent Scalability",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 32,
+      "name": "CUDA Device Memory Types; Constant Memory and Caching",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 33,
+      "name": "Tiled 1D Convolution with Halo Elements",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 34,
+      "name": "Importance of Memory-Access Efficiency",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 35,
+      "name": "Reducing Global-Memory Traffic and Tiled Matrix-Matrix Multiplication",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 36,
+      "name": "Thread Scheduling and Latency Tolerance",
+      "co_code": "CO5"
+    }
+  ],
+  "sdl_items": [
+    {
+      "sl_no": 1,
+      "topic": "Introduction to Parallel Computing - Taxonomy & multicore evolution",
+      "hours": 3,
+      "co_code": "CO1"
+    },
+    {
+      "sl_no": 2,
+      "topic": "Performance Analysis - Amdahl's Law & Gustafson's Law",
+      "hours": 3,
+      "co_code": "CO1"
+    },
+    {
+      "sl_no": 3,
+      "topic": "Programming Paradigms - OpenMP, MPI, and CUDA comparison",
+      "hours": 3,
+      "co_code": "CO1"
+    },
+    {
+      "sl_no": 4,
+      "topic": "Introduction to OpenMP - Install and sample programs",
+      "hours": 3,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 5,
+      "topic": "Data Sharing and Synchronization in OpenMP",
+      "hours": 3,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 6,
+      "topic": "Scheduling and Runtime Functions in OpenMP",
+      "hours": 3,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 7,
+      "topic": "MPI Basics - OpenMPI & Hello World",
+      "hours": 3,
+      "co_code": "CO3"
+    },
+    {
+      "sl_no": 8,
+      "topic": "Point-to-Point Communication in MPI",
+      "hours": 3,
+      "co_code": "CO3"
+    },
+    {
+      "sl_no": 9,
+      "topic": "Collective Communication in MPI",
+      "hours": 3,
+      "co_code": "CO3"
+    },
+    {
+      "sl_no": 10,
+      "topic": "GPU Architecture - Streaming multiprocessors & CUDA cores",
+      "hours": 3,
+      "co_code": "CO4"
+    },
+    {
+      "sl_no": 11,
+      "topic": "CUDA Programming Basics - Vector addition & toolkit setup",
+      "hours": 3,
+      "co_code": "CO4"
+    },
+    {
+      "sl_no": 12,
+      "topic": "Memory Management in CUDA - Host-device transfer",
+      "hours": 3,
+      "co_code": "CO4"
+    },
+    {
+      "sl_no": 13,
+      "topic": "GPU Memory Optimization - Shared vs global memory",
+      "hours": 3,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 14,
+      "topic": "Warp Execution and Thread Organization in CUDA",
+      "hours": 3,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 15,
+      "topic": "Memory Optimization using Tiling - Matrix multiplication",
+      "hours": 3,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 16,
+      "topic": "Parallel Programming Case Study / Mini Project",
+      "hours": 9,
+      "co_code": "CO6"
+    }
+  ],
+  "sdl_hours_total": 54,
+  "assessments": [
+    {
+      "name": "Mid-Term",
+      "type": "Descriptive",
+      "marks": 30.0,
+      "schedule": "25 Sep to 1 Oct 2026",
+      "start_date": "2026-09-25",
+      "end_date": "2026-10-01",
+      "covered_lectures": "1-17",
+      "covered_chapters": "OpenMP and MPI theory and lab"
+    },
+    {
+      "name": "Continuous Lab Evaluation",
+      "type": "Lab",
+      "marks": 8.0,
+      "schedule": "Respective Labs",
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "6-36",
+      "covered_chapters": "OpenMP, MPI, CUDA"
+    },
+    {
+      "name": "Lab Exam",
+      "type": "Lab",
+      "marks": 4.0,
+      "schedule": "Lab 8 or Lab 9",
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "6-27",
+      "covered_chapters": "OpenMP, MPI, CUDA"
+    },
+    {
+      "name": "Mini Project",
+      "type": "Project",
+      "marks": 8.0,
+      "schedule": "Lab 5, 10, 12",
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "1-36",
+      "covered_chapters": "OpenMP, MPI, CUDA"
+    },
+    {
+      "name": "End-Sem",
+      "type": "Descriptive",
+      "marks": 50.0,
+      "schedule": null,
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "1-36",
+      "covered_chapters": "Comprehensive full syllabus"
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "course_info": {
+    "code": "HUM 3022",
+    "name": "Essentials of Management",
+    "credits": 3,
+    "semester": "Odd",
+    "academic_year": "2026-2027"
+  },
+  "outcomes": [
+    {
+      "code": "CO1",
+      "statement": "Apply management concepts and understand the importance of social responsibility & ethics in practical aspects of business.",
+      "hours": 8,
+      "marks": 23
+    },
+    {
+      "code": "CO2",
+      "statement": "Apply fundamental principles of planning, quality management and strategic decision making for businesses.",
+      "hours": 9,
+      "marks": 22
+    },
+    {
+      "code": "CO3",
+      "statement": "Apply fundamental concepts of organizing and delegating authority to manage organizational structures.",
+      "hours": 6,
+      "marks": 19
+    },
+    {
+      "code": "CO4",
+      "statement": "Apply systems approach to staffing and human resource management to acquire and retain talent.",
+      "hours": 5,
+      "marks": 17
+    },
+    {
+      "code": "CO5",
+      "statement": "Apply principles of leading, communicating and controlling to achieve organizational goals.",
+      "hours": 8,
+      "marks": 19
+    }
+  ],
+  "lesson_plan": [
+    {
+      "lecture_num": 1,
+      "name": "Introduction to Business, Classification of Industries",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 2,
+      "name": "Importance of management for an engineer, Manager – Definition & classification, managers and administrators",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 3,
+      "name": "Systems Approach to Management, Functions of Managers, 3 Managerial Skills",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 4,
+      "name": "14 Principles of Management by Henri Fayol",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 5,
+      "name": "14 Principles of Management by Henri Fayol – CONTINUED",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 6,
+      "name": "Mintzberg’s 10 roles played by managers",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 7,
+      "name": "External Environment, Social Responsibility of managers, Ethics in managing – an integrated approach",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 8,
+      "name": "Trust as the Basis for Change Management. International Business",
+      "co_code": "CO1"
+    },
+    {
+      "lecture_num": 9,
+      "name": "Types of Plans, Steps in Planning, Objectives, Evolving Concepts in Management by Objectives",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 10,
+      "name": "Nature and Purpose of Strategies and Policies",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 11,
+      "name": "Quality Management: relevance in management, Total Quality Management (TQM)",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 12,
+      "name": "Strategic Quality Planning, SMART quality goals, aligning with MBO",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 13,
+      "name": "Strategic Planning Process – Critical Question Analysis",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 14,
+      "name": "SWOT & TOWS Matrix: A Modern Tool for Analysis of the Situation",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 15,
+      "name": "Blue Ocean Strategy: In Pursuit of Opportunities in Uncontested",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 16,
+      "name": "The Portfolio Matrix: A Tool for Allocating Resources",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 17,
+      "name": "Porter’s Industry Analysis and Generic Competitive Strategies",
+      "co_code": "CO2"
+    },
+    {
+      "lecture_num": 18,
+      "name": "Organizing Process, Span of Management",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 19,
+      "name": "Urwick’s Principles of Organizing",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 20,
+      "name": "factors affecting the span",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 21,
+      "name": "Various methods of Departmentation",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 22,
+      "name": "Line and Staff concepts (Line, Staff and Functional Staff authority)",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 23,
+      "name": "Delegation- Definition, Principles and Steps",
+      "co_code": "CO3"
+    },
+    {
+      "lecture_num": 24,
+      "name": "Difference between HRM and HRD; Job Analysis",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 25,
+      "name": "Job Description and Job Specification; Recruitment - methods and sources",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 26,
+      "name": "Selection Process, Techniques and Instruments",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 27,
+      "name": "Induction and Orientation. Systems Approach to Staffing",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 28,
+      "name": "Approaches to Manager Development and Training",
+      "co_code": "CO4"
+    },
+    {
+      "lecture_num": 29,
+      "name": "Differences between - Leading and Managing, Leader and Manager",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 30,
+      "name": "motives, motivators & motivation. Theories of Motivation - Maslow’s Need Hierarchy",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 31,
+      "name": "Herzberg’s Two-Factor Theory and McGregor X and Y. Motivational Techniques",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 32,
+      "name": "Leadership Styles - Likert’s Four Systems of Management, Theories, Leadership Grid",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 33,
+      "name": "Committees, Teams, and Group Decision-Making",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 34,
+      "name": "Communication - Difference between General and Managerial Communication, Types of Communication, Barriers of Communication",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 35,
+      "name": "Control Process (steps), Management Control Techniques (Budgetary, Non-budgetary and Network)",
+      "co_code": "CO5"
+    },
+    {
+      "lecture_num": 36,
+      "name": "Types of control",
+      "co_code": "CO5"
+    }
+  ],
+  "sdl_items": [
+    {
+      "sl_no": 1,
+      "topic": "Quality Management (SWAYAM)",
+      "hours": 32,
+      "co_code": "CO2"
+    },
+    {
+      "sl_no": 2,
+      "topic": "Management Control Techniques (SWAYAM)",
+      "hours": 16,
+      "co_code": "CO5"
+    },
+    {
+      "sl_no": 3,
+      "topic": "International Business (SWAYAM)",
+      "hours": 8,
+      "co_code": "CO1"
+    }
+  ],
+  "sdl_row_hours": [
+    32,
+    16,
+    8
+  ],
+  "sdl_hours_printed_total": 54,
+  "sdl_rows_sum": 56,
+  "assessments": [
+    {
+      "name": "Quiz1",
+      "type": "Quiz",
+      "marks": 5.0,
+      "schedule": "17-29 Aug 2026",
+      "start_date": "2026-08-17",
+      "end_date": "2026-08-29",
+      "covered_lectures": "1-8",
+      "covered_chapters": "Chapter 1 Full, Chapter 2 up to Steps in Planning"
+    },
+    {
+      "name": "Mid-Term",
+      "type": "Descriptive",
+      "marks": 30.0,
+      "schedule": "25 Sep to 1 Oct 2026",
+      "start_date": "2026-09-25",
+      "end_date": "2026-10-01",
+      "covered_lectures": "1-21",
+      "covered_chapters": "Chapter 1 Full, Chapter 2 Full, Chapter 3 up to Methods of Departmentation"
+    },
+    {
+      "name": "Quiz2",
+      "type": "Quiz",
+      "marks": 5.0,
+      "schedule": "7-21 Sep 2026",
+      "start_date": "2026-09-07",
+      "end_date": "2026-09-21",
+      "covered_lectures": "18-28",
+      "covered_chapters": "Chapter 3 & Chapter 4"
+    },
+    {
+      "name": "Term Project",
+      "type": "Project",
+      "marks": 10.0,
+      "schedule": "Report 4 Oct 2026, presentation from 19 Oct 2026",
+      "start_date": "2026-10-04",
+      "end_date": "2026-10-19",
+      "report_date": "4 Oct 2026",
+      "presentation_date": "19 Oct 2026",
+      "covered_lectures": "1-36",
+      "covered_chapters": "Chapters 1,2,3,4,5"
+    },
+    {
+      "name": "End-Sem",
+      "type": "Descriptive",
+      "marks": 50.0,
+      "schedule": null,
+      "start_date": null,
+      "end_date": null,
+      "covered_lectures": "1-36",
+      "covered_chapters": "Comprehensive full syllabus"
+    }
+  ]
+}
