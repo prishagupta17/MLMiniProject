@@ -48,6 +48,27 @@ Train the model (also auto-generates a synthetic bootstrap dataset the first tim
 python -m app.train
 ```
 
+**(Optional) Run the simulation manually** to regenerate or inspect simulated student histories:
+```
+python - << 'EOF'
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.app.models import Base
+from backend.app.seed_loader import load_all_seeds
+from backend.app.synthetic_data import simulate_students, SimulationConfig
+
+engine = create_engine("sqlite:///forgetting_engine.db")
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+db = Session()
+load_all_seeds(db)
+simulate_students(db, SimulationConfig(n_students=30, random_seed=42))
+print("Done.")
+EOF
+```
+
+> **Note**: Simulated data is flagged `is_simulated=True`. It does not represent real students and must not be cited as accuracy evidence.
+
 **(Optional) Add your API key** — only needed for real LLM-based topic enrichment:
 1. Copy `.env.example` to a new file named `.env` (same folder)
 2. Open `.env`, replace the placeholder with your real key
