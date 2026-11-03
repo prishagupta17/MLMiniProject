@@ -143,14 +143,6 @@ export default function DashboardScreen({
 
             <div className="flex items-center gap-3 shrink-0 z-10 flex-wrap">
               <button
-                onClick={() => onOpenExplanation(focusTopic)}
-                className="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all flex items-center gap-1.5 backdrop-blur-md"
-              >
-                <HelpCircle className="w-4 h-4" />
-                <span>Why this?</span>
-              </button>
-
-              <button
                 onClick={() => onOpenStudyModal(focusTopic.topic_id)}
                 className="px-5 py-2.5 rounded-xl bg-white text-violet-700 hover:bg-violet-50 text-xs font-extrabold shadow-sm transition-all flex items-center gap-1.5"
               >
@@ -202,29 +194,19 @@ export default function DashboardScreen({
                   </h5>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
                   <button
-                    onClick={() => onOpenExplanation(topic)}
-                    className="text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1"
+                    onClick={() => onOpenStudyModal(topic.topic_id)}
+                    className="px-3 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-xl transition-all"
                   >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    <span>Why?</span>
+                    Review
                   </button>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => onOpenStudyModal(topic.topic_id)}
-                      className="px-3 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-xl transition-all"
-                    >
-                      Review
-                    </button>
-                    <button
-                      onClick={() => onOpenSelfCheckModal(topic.topic_id)}
-                      className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition-all"
-                    >
-                      Quiz
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => onOpenSelfCheckModal(topic.topic_id)}
+                    className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition-all"
+                  >
+                    Quiz
+                  </button>
                 </div>
               </div>
             ))}

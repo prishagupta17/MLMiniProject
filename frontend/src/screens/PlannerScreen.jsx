@@ -121,29 +121,19 @@ export default function PlannerScreen({
                   )}
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                   <button
-                    onClick={() => onOpenExplanation(topic)}
-                    className="text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1"
+                    onClick={() => onOpenStudyModal(topic.topic_id)}
+                    className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
                   >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    Why?
+                    Study (30m)
                   </button>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onOpenStudyModal(topic.topic_id)}
-                      className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
-                    >
-                      Study (30m)
-                    </button>
-                    <button
-                      onClick={() => onOpenSelfCheckModal(topic.topic_id)}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
-                    >
-                      Test
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => onOpenSelfCheckModal(topic.topic_id)}
+                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
+                  >
+                    Test
+                  </button>
                 </div>
               </div>
             ))}
@@ -192,29 +182,19 @@ export default function PlannerScreen({
                   </h4>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                   <button
-                    onClick={() => onOpenExplanation(topic)}
-                    className="text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1"
+                    onClick={() => onOpenStudyModal(topic.topic_id)}
+                    className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
                   >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    Why?
+                    Study (15m)
                   </button>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onOpenStudyModal(topic.topic_id)}
-                      className="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
-                    >
-                      Study (15m)
-                    </button>
-                    <button
-                      onClick={() => onOpenSelfCheckModal(topic.topic_id)}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
-                    >
-                      Test
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => onOpenSelfCheckModal(topic.topic_id)}
+                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
+                  >
+                    Test
+                  </button>
                 </div>
               </div>
             ))}

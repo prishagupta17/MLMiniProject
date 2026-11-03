@@ -279,16 +279,6 @@ export default function CoursesScreen({
 
                             {/* Actions */}
                             <div className="flex items-center gap-2 shrink-0">
-                              {isStudied && (
-                                <button
-                                  onClick={() => onOpenExplanation(riskInfo)}
-                                  className="px-2.5 py-1 text-slate-500 hover:text-violet-700 hover:bg-violet-50 rounded-lg text-xs font-bold transition-all flex items-center gap-1"
-                                >
-                                  <HelpCircle className="w-3.5 h-3.5" />
-                                  <span>Why?</span>
-                                </button>
-                              )}
-
                               <button
                                 onClick={() => onOpenStudyModal(topic.id)}
                                 className="px-3 py-1 bg-violet-50 hover:bg-violet-100 text-violet-700 rounded-lg text-xs font-bold transition-all"
