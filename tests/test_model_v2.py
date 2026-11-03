@@ -246,7 +246,15 @@ def _ensure_v2_test_user(db):
         db.add(user)
         db.commit()
         db.refresh(user)
-        if topic is not None:
+    # Always ensure at least one LearningEvent exists for user+topic so
+    # predict_forgetting() can compute features (it returns None with no study history).
+    if topic is not None:
+        existing_le = (
+            db.query(LearningEvent)
+            .filter(LearningEvent.user_id == user.id, LearningEvent.topic_id == topic.id)
+            .first()
+        )
+        if existing_le is None:
             le = LearningEvent(
                 user_id=user.id,
                 topic_id=topic.id,
