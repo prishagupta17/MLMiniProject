@@ -1,17 +1,17 @@
 import React from 'react';
 import { 
-  AlertTriangle, 
+  Sparkles,
   CheckCircle2, 
   Clock, 
-  BookOpen, 
   ArrowRight, 
-  Sparkles,
+  BookOpen, 
   HelpCircle,
-  TrendingDown,
-  ShieldAlert,
-  ChevronRight,
-  Flame,
-  GraduationCap
+  Play,
+  RotateCcw,
+  Zap,
+  Target,
+  Smile,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function DashboardScreen({ 
@@ -25,287 +25,189 @@ export default function DashboardScreen({
 }) {
   if (loading && !dashboardData) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <div className="w-10 h-10 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin" />
-        <p className="text-xs font-semibold text-slate-500">Calculating cognitive retention scores...</p>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
+        <div className="w-9 h-9 border-3 border-violet-200 border-t-violet-600 rounded-full animate-spin" />
+        <p className="text-xs font-medium text-slate-400">Preparing your personalized study flow...</p>
       </div>
     );
   }
 
   const topics = dashboardData?.topics || [];
-  const highRiskTopics = topics.filter((t) => t.retention_status === 'high_risk');
-  const modRiskTopics = topics.filter((t) => t.retention_status === 'moderate_risk');
+  const urgentTopics = topics.filter((t) => t.retention_status === 'high_risk');
+  const moderateTopics = topics.filter((t) => t.retention_status === 'moderate_risk');
   const retainedTopics = topics.filter((t) => t.retention_status === 'retained');
 
-  // Top 5 topics to revise (already sorted by forgetting_probability descending from dashboard API)
-  const top5Revise = topics.slice(0, 5);
+  // The single top focus topic for the student right now
+  const focusTopic = topics[0] || null;
+  // Up to 3 next recommendations (bite-sized, not overwhelming)
+  const upNextTopics = topics.slice(1, 4);
 
-  const overallRetentionPct = dashboardData 
-    ? Math.round(dashboardData.overall_retention_score * 100) 
-    : 100;
+  const firstName = user?.name ? user.name.split('_')[0] : 'Learner';
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
-      {/* Welcome Banner */}
-      <div className="p-8 rounded-3xl bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-700 text-white shadow-soft relative overflow-hidden">
-        <div className="relative z-10 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold mb-3 tracking-wide">
+    <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in duration-200">
+      
+      {/* 1. Calm, Friendly Header Banner */}
+      <div className="p-7 rounded-3xl bg-white border border-[#EDE9FE] shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="space-y-2 z-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-50 text-violet-700 text-xs font-bold">
             <Sparkles className="w-3.5 h-3.5" />
-            AI Forgetting Prediction Engine
+            <span>Today's Memory Plan</span>
           </div>
-          <h2 className="text-2xl font-black tracking-tight mb-2">
-            Targeted Cognitive Retention Dashboard
+          <h2 className="text-2xl font-black text-[#1E1B4B] tracking-tight">
+            Hi, {firstName}! What are we revising today?
           </h2>
-          <p className="text-sm text-violet-100 leading-relaxed font-medium">
-            Personalized recall decay estimates generated from your study frequency, elapsed days, and curriculum load.
+          <p className="text-xs text-slate-500 font-medium max-w-lg leading-relaxed">
+            {urgentTopics.length > 0 
+              ? `You have ${urgentTopics.length} topic${urgentTopics.length > 1 ? 's' : ''} ready for a quick refresher. Reviewing just one topic keeps your memory sharp!`
+              : "All your studied topics are looking healthy and fresh! Feel free to explore new topics or do a quick self-check."}
           </p>
         </div>
-        {/* Subtle decorative elements */}
-        <div className="absolute right-0 top-0 bottom-0 w-80 bg-white/5 rounded-l-full pointer-events-none" />
-      </div>
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-        {/* Overall Retention Score */}
-        <div className="p-6 rounded-3xl bg-white border border-[#EDE9FE] shadow-card flex items-center justify-between">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-              Retention Score
-            </div>
-            <div className="text-3xl font-black text-[#1E1B4B]">
-              {overallRetentionPct}%
-            </div>
-            <div className="text-[11px] text-slate-500 font-semibold mt-1 flex items-center gap-1">
-              <span className={overallRetentionPct >= 70 ? 'text-emerald-600' : 'text-amber-600'}>
-                {overallRetentionPct >= 70 ? 'Strong baseline' : 'Needs attention'}
-              </span>
-              <span>across studied concepts</span>
-            </div>
+        {/* Bite-sized summary pill */}
+        <div className="flex items-center gap-3 shrink-0 z-10">
+          <div className="px-4 py-3 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] text-center min-w-[90px]">
+            <div className="text-xl font-black text-violet-700">{urgentTopics.length}</div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Due Today</div>
           </div>
-          <div className="w-14 h-14 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center font-black text-xl border border-violet-100">
-            {overallRetentionPct}%
+          <div className="px-4 py-3 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] text-center min-w-[90px]">
+            <div className="text-xl font-black text-amber-600">{moderateTopics.length}</div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Soon</div>
           </div>
-        </div>
-
-        {/* High Risk Topics */}
-        <div className="p-6 rounded-3xl bg-white border border-[#EDE9FE] shadow-card flex items-center justify-between">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-              High Risk (≥ 60%)
-            </div>
-            <div className="text-3xl font-black text-rose-600">
-              {highRiskTopics.length}
-            </div>
-            <div className="text-[11px] text-slate-500 font-semibold mt-1">
-              Critical priority for revision
-            </div>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
-            <ShieldAlert className="w-7 h-7" />
-          </div>
-        </div>
-
-        {/* Moderate Risk Topics */}
-        <div className="p-6 rounded-3xl bg-white border border-[#EDE9FE] shadow-card flex items-center justify-between">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-              Moderate Risk (35-60%)
-            </div>
-            <div className="text-3xl font-black text-amber-600">
-              {modRiskTopics.length}
-            </div>
-            <div className="text-[11px] text-slate-500 font-semibold mt-1">
-              Review within 2-3 days
-            </div>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
-            <Clock className="w-7 h-7" />
-          </div>
-        </div>
-
-        {/* Retained Topics */}
-        <div className="p-6 rounded-3xl bg-white border border-[#EDE9FE] shadow-card flex items-center justify-between">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-              Retained (&lt; 35%)
-            </div>
-            <div className="text-3xl font-black text-emerald-600">
-              {retainedTopics.length}
-            </div>
-            <div className="text-[11px] text-slate-500 font-semibold mt-1">
-              Memory consolidated
-            </div>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-            <CheckCircle2 className="w-7 h-7" />
+          <div className="px-4 py-3 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] text-center min-w-[90px]">
+            <div className="text-xl font-black text-emerald-600">{retainedTopics.length}</div>
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Remembered</div>
           </div>
         </div>
       </div>
 
-      {/* Main Grid: Top 5 Urgent Revisions + Course Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column (2 spans): Top 5 Topics to Revise */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                <Flame className="w-5 h-5" />
+      {/* 2. "Focus on One Thing" Hero Card */}
+      {focusTopic && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 px-1">
+            <Target className="w-4 h-4 text-violet-600" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Recommended Right Now (Quick 15-Minute Win)
+            </h3>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-soft relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-2 z-10 max-w-xl">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/20 backdrop-blur-md text-[11px] font-bold text-violet-100">
+                <span>{focusTopic.module_name}</span>
+                <span>•</span>
+                <span className="text-white">Refresher Recommended</span>
               </div>
-              <div>
-                <h3 className="text-base font-extrabold text-[#1E1B4B]">
-                  Top 5 Urgent Revisions
-                </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Ranked by predicted forgetting probability
-                </p>
-              </div>
+              <h4 className="text-xl font-extrabold tracking-tight text-white">
+                {focusTopic.topic_name}
+              </h4>
+              <p className="text-xs text-violet-100/90 leading-relaxed font-medium">
+                {focusTopic.local_explanation?.summary || "A brief 15-minute review session today will lock this concept into long-term recall."}
+              </p>
             </div>
-            <span className="text-xs font-bold text-slate-400">
-              Showing 5 of {topics.length} studied concepts
+
+            {/* Quick Actions on the Focus Card */}
+            <div className="flex items-center gap-3 shrink-0 z-10 flex-wrap">
+              <button
+                onClick={() => onOpenExplanation(focusTopic)}
+                className="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all flex items-center gap-1.5 backdrop-blur-md"
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span>Why this?</span>
+              </button>
+
+              <button
+                onClick={() => onOpenStudyModal(focusTopic.topic_id)}
+                className="px-5 py-2.5 rounded-xl bg-white text-violet-700 hover:bg-violet-50 text-xs font-extrabold shadow-sm transition-all flex items-center gap-1.5"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Start Review (15m)</span>
+              </button>
+
+              <button
+                onClick={() => onOpenSelfCheckModal(focusTopic.topic_id)}
+                className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Quick Quiz</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Up Next (Only 3 calm cards, not a huge overwhelming wall) */}
+      {upNextTopics.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Up Next When You're Ready
+            </h3>
+            <span className="text-xs text-slate-400 font-medium">
+              Take it one topic at a time
             </span>
           </div>
 
-          {top5Revise.length === 0 ? (
-            <div className="p-8 rounded-3xl bg-white border border-[#EDE9FE] text-center space-y-3">
-              <GraduationCap className="w-10 h-10 text-slate-300 mx-auto" />
-              <p className="text-sm font-bold text-slate-700">No studied topics recorded yet</p>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Log a study session for any topic in the curriculum to activate the personalized forgetting engine.
-              </p>
-              <button
-                onClick={() => onOpenStudyModal()}
-                className="px-4 py-2 bg-violet-600 text-white rounded-xl text-xs font-bold hover:bg-violet-700 transition-all shadow-soft"
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {upNextTopics.map((topic, i) => (
+              <div
+                key={topic.topic_id}
+                className="p-5 rounded-2xl bg-white border border-[#EDE9FE] shadow-card hover:border-violet-200 transition-all flex flex-col justify-between gap-4"
               >
-                Log First Study Session
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3.5">
-              {top5Revise.map((topic, index) => {
-                const probPct = (topic.forgetting_probability * 100).toFixed(1);
-                const isHigh = topic.retention_status === 'high_risk';
-
-                return (
-                  <div
-                    key={topic.topic_id}
-                    className="p-5 rounded-2xl bg-white border border-[#EDE9FE] shadow-card hover:shadow-hover transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
-                  >
-                    <div className="space-y-1.5 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">
-                          #{index + 1} Priority
-                        </span>
-                        <span className="text-xs text-slate-400 font-medium truncate max-w-[200px]">
-                          {topic.module_name}
-                        </span>
-                        <span className={
-                          isHigh 
-                            ? 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200'
-                            : 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200'
-                        }>
-                          {isHigh ? 'High Risk' : 'Moderate Risk'}
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-extrabold text-[#1E1B4B] group-hover:text-violet-700 transition-colors">
-                        {topic.topic_name}
-                      </h4>
-                      {topic.local_explanation?.summary && (
-                        <p className="text-xs text-slate-500 line-clamp-1 font-medium">
-                          {topic.local_explanation.summary}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Risk Stat & Actions */}
-                    <div className="flex items-center gap-4 shrink-0 sm:border-l sm:border-slate-100 sm:pl-5">
-                      <div className="text-right">
-                        <div className="text-lg font-black text-rose-600">
-                          {probPct}%
-                        </div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase">
-                          Forgetting Risk
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {/* Why? Explanation trigger */}
-                        <button
-                          onClick={() => onOpenExplanation(topic)}
-                          className="p-2 text-violet-600 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
-                          title="View local topic-specific explainability decomposition"
-                        >
-                          <HelpCircle className="w-4 h-4" />
-                          <span className="hidden sm:inline">Why?</span>
-                        </button>
-
-                        {/* Quick Study */}
-                        <button
-                          onClick={() => onOpenStudyModal(topic.topic_id)}
-                          className="px-3 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
-                          title="Log study session for this topic"
-                        >
-                          Study
-                        </button>
-
-                        {/* Quick Self-Check */}
-                        <button
-                          onClick={() => onOpenSelfCheckModal(topic.topic_id)}
-                          className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-soft"
-                          title="Submit a recall test check"
-                        >
-                          Test
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Right Column: Course Overview */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-extrabold text-[#1E1B4B]">
-                Curriculum Overview
-              </h3>
-            </div>
-            <span className="text-xs font-bold text-slate-400">4 Courses</span>
-          </div>
-
-          <div className="space-y-3.5">
-            {courses.map((course) => {
-              // Count studied topics for this course from dashboardData
-              // (match via course modules or topic names)
-              return (
-                <div
-                  key={course.id}
-                  className="p-5 rounded-2xl bg-white border border-[#EDE9FE] shadow-card hover:shadow-hover transition-all"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-violet-600">
-                      Course #{course.id}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">
+                      Step {i + 2}
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">Active</span>
+                    <span className="text-[10px] font-bold text-slate-400 truncate max-w-[120px]">
+                      {topic.module_name}
+                    </span>
                   </div>
-                  <h4 className="text-sm font-extrabold text-[#1E1B4B] mb-2 leading-snug">
-                    {course.name}
-                  </h4>
-                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium pt-2 border-t border-slate-100">
-                    <span>Curriculum coverage</span>
-                    <span className="font-bold text-slate-700">Enrolled</span>
+                  <h5 className="text-sm font-extrabold text-[#1E1B4B] leading-snug line-clamp-2">
+                    {topic.topic_name}
+                  </h5>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    onClick={() => onOpenExplanation(topic)}
+                    className="text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1"
+                  >
+                    <HelpCircle className="w-3.5 h-3.5" />
+                    <span>Why?</span>
+                  </button>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => onOpenStudyModal(topic.topic_id)}
+                      className="px-3 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-bold rounded-xl transition-all"
+                    >
+                      Review
+                    </button>
+                    <button
+                      onClick={() => onOpenSelfCheckModal(topic.topic_id)}
+                      className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition-all"
+                    >
+                      Quiz
+                    </button>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
+      )}
+
+      {/* 4. Encouraging Habit Footer */}
+      <div className="p-5 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
+          <Smile className="w-5 h-5" />
+        </div>
+        <p className="text-xs text-slate-600 leading-relaxed font-medium">
+          <span className="font-bold text-violet-900">Study Tip:</span> Short 10-15 minute retrieval sessions spaced a few days apart are 3x more effective than cramming for hours. Be kind to yourself and take breaks!
+        </p>
       </div>
+
     </div>
   );
 }
