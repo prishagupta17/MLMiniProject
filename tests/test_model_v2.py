@@ -238,12 +238,31 @@ def test_elapsed_days_stress_and_monotonicity(v2_bundle, synthetic_features):
 # 5. Prediction Pipeline & API Compatibility
 # ---------------------------------------------------------------------------
 
+def _ensure_v2_test_user(db):
+    user = db.query(User).first()
+    topic = db.query(Topic).first()
+    if user is None:
+        user = User(name="Test Candidate Student", email="test_cand_v2@test.internal", is_simulated=False)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        if topic is not None:
+            le = LearningEvent(
+                user_id=user.id,
+                topic_id=topic.id,
+                time_spent_seconds=1200,
+                self_reported_confidence=0.75,
+            )
+            db.add(le)
+            db.commit()
+    return user, topic
+
+
 def test_predict_forgetting_with_v2_bundle():
     """Verify predict_forgetting runs with bundle=v2_bundle on live database."""
     db = SessionLocal()
     try:
-        user = db.query(User).first()
-        topic = db.query(Topic).first()
+        user, topic = _ensure_v2_test_user(db)
         assert user is not None and topic is not None
 
         # Predict with production default v1
@@ -273,8 +292,7 @@ def test_incompatible_model_schema_rejection():
     """Verify loading a model with mismatching feature columns throws RuntimeError."""
     db = SessionLocal()
     try:
-        user = db.query(User).first()
-        topic = db.query(Topic).first()
+        user, topic = _ensure_v2_test_user(db)
 
         legacy_bundle = _load_bundle(LEGACY_PATH)
         with pytest.raises(RuntimeError, match="Model feature mismatch"):

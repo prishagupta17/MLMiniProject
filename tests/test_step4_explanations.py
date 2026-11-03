@@ -290,6 +290,38 @@ def test_grammar_and_boundary_rules():
         assert "cause" not in sent.lower()
 
 
+def _get_or_create_test_student(db):
+    le = db.query(LearningEvent).first()
+    if le is not None:
+        return le
+    user = db.query(User).filter(User.email == "test_audit_student@test.internal").first()
+    if user is None:
+        user = User(name="Test Audit Student", email="test_audit_student@test.internal", is_simulated=False)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    topic = db.query(Topic).first()
+    le = LearningEvent(
+        user_id=user.id,
+        topic_id=topic.id,
+        time_spent_seconds=1800,
+        self_reported_confidence=0.8,
+        timestamp=datetime.utcnow() - timedelta(days=2),
+    )
+    db.add(le)
+    re = RecallEvent(
+        user_id=user.id,
+        topic_id=topic.id,
+        is_correct=True,
+        time_spent_seconds=60,
+        timestamp=datetime.utcnow() - timedelta(days=1),
+    )
+    db.add(re)
+    db.commit()
+    db.refresh(le)
+    return le
+
+
 # ---------------------------------------------------------------------------
 # Test 12 & 13: Zero Leakage and Historical Correctness
 # ---------------------------------------------------------------------------
@@ -300,7 +332,7 @@ def test_no_leakage_from_recall_event_correctness():
     or the resulting local explanations.
     """
     db = SessionLocal()
-    le = db.query(LearningEvent).first()
+    le = _get_or_create_test_student(db)
     user_id = le.user_id
     topic_id = le.topic_id
 
@@ -340,7 +372,7 @@ def test_dashboard_api_returns_local_explanations():
     local_explanation and populated top_factors.
     """
     db = SessionLocal()
-    le = db.query(LearningEvent).first()
+    le = _get_or_create_test_student(db)
     user_id = le.user_id
     db.close()
 

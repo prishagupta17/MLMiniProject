@@ -1,4 +1,5 @@
-const API_BASE = 'http://127.0.0.1:8000';
+// Dynamic API routing: uses Vite proxy /api when hosted on port 3000, or direct backend
+const API_BASE = import.meta.env.VITE_API_BASE || (typeof window !== 'undefined' && window.location.port === '3000' ? '/api' : 'http://127.0.0.1:8000');
 
 async function handleResponse(res) {
   if (!res.ok) {

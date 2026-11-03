@@ -11,7 +11,8 @@ import {
   Zap,
   Target,
   Smile,
-  ShieldCheck
+  ShieldCheck,
+  Plus
 } from 'lucide-react';
 
 export default function DashboardScreen({ 
@@ -21,7 +22,8 @@ export default function DashboardScreen({
   user,
   onOpenStudyModal, 
   onOpenSelfCheckModal,
-  onOpenExplanation 
+  onOpenExplanation,
+  onNavigateCourses
 }) {
   if (loading && !dashboardData) {
     return (
@@ -37,17 +39,14 @@ export default function DashboardScreen({
   const moderateTopics = topics.filter((t) => t.retention_status === 'moderate_risk');
   const retainedTopics = topics.filter((t) => t.retention_status === 'retained');
 
-  // The single top focus topic for the student right now
   const focusTopic = topics[0] || null;
-  // Up to 3 next recommendations (bite-sized, not overwhelming)
   const upNextTopics = topics.slice(1, 4);
-
-  const firstName = user?.name ? user.name.split('_')[0] : 'Learner';
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Learner';
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in duration-200">
       
-      {/* 1. Calm, Friendly Header Banner */}
+      {/* 1. Friendly Header Banner */}
       <div className="p-7 rounded-3xl bg-white border border-[#EDE9FE] shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
         <div className="space-y-2 z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-50 text-violet-700 text-xs font-bold">
@@ -55,16 +54,18 @@ export default function DashboardScreen({
             <span>Today's Memory Plan</span>
           </div>
           <h2 className="text-2xl font-black text-[#1E1B4B] tracking-tight">
-            Hi, {firstName}! What are we revising today?
+            Hi, {firstName}! What are we studying today?
           </h2>
           <p className="text-xs text-slate-500 font-medium max-w-lg leading-relaxed">
-            {urgentTopics.length > 0 
+            {topics.length === 0
+              ? "You haven't logged any study sessions yet. Pick a topic from your courses or log study time to start tracking your retention."
+              : urgentTopics.length > 0 
               ? `You have ${urgentTopics.length} topic${urgentTopics.length > 1 ? 's' : ''} ready for a quick refresher. Reviewing just one topic keeps your memory sharp!`
-              : "All your studied topics are looking healthy and fresh! Feel free to explore new topics or do a quick self-check."}
+              : "All your studied topics are looking healthy and fresh! Great work keeping up your recall."}
           </p>
         </div>
 
-        {/* Bite-sized summary pill */}
+        {/* Summary counts */}
         <div className="flex items-center gap-3 shrink-0 z-10">
           <div className="px-4 py-3 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] text-center min-w-[90px]">
             <div className="text-xl font-black text-violet-700">{urgentTopics.length}</div>
@@ -81,7 +82,41 @@ export default function DashboardScreen({
         </div>
       </div>
 
-      {/* 2. "Focus on One Thing" Hero Card */}
+      {/* 2. Empty state if 0 topics studied yet */}
+      {topics.length === 0 && (
+        <div className="p-10 rounded-3xl bg-white border border-[#EDE9FE] shadow-card text-center space-y-4 max-w-xl mx-auto my-4">
+          <div className="w-14 h-14 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center mx-auto shadow-sm">
+            <BookOpen className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-lg font-black text-[#1E1B4B]">
+              Ready to record your first study session?
+            </h3>
+            <p className="text-xs text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+              Log study time for any topic from the 4 course syllabi. The AI forgetting engine will immediately begin calculating cognitive decay curves and scheduling timely refreshers!
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => onOpenStudyModal()}
+              className="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold shadow-soft transition-all flex items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Log Study Session</span>
+            </button>
+            {onNavigateCourses && (
+              <button
+                onClick={onNavigateCourses}
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
+              >
+                Browse Course Topics
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 3. "Focus on One Thing" Hero Card */}
       {focusTopic && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 px-1">
@@ -106,7 +141,6 @@ export default function DashboardScreen({
               </p>
             </div>
 
-            {/* Quick Actions on the Focus Card */}
             <div className="flex items-center gap-3 shrink-0 z-10 flex-wrap">
               <button
                 onClick={() => onOpenExplanation(focusTopic)}
@@ -136,7 +170,7 @@ export default function DashboardScreen({
         </div>
       )}
 
-      {/* 3. Up Next (Only 3 calm cards, not a huge overwhelming wall) */}
+      {/* 4. Up Next (Bite-sized cards) */}
       {upNextTopics.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
@@ -198,7 +232,7 @@ export default function DashboardScreen({
         </div>
       )}
 
-      {/* 4. Encouraging Habit Footer */}
+      {/* 5. Encouraging Habit Footer */}
       <div className="p-5 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] flex items-center gap-3">
         <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
           <Smile className="w-5 h-5" />
