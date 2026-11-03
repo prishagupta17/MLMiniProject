@@ -202,13 +202,26 @@ def test_feature_consistency_predict_vs_table(seeded_db):
         )
 
 
-def test_model_feature_version_mismatch(seeded_db):
+def test_model_feature_version_mismatch(seeded_db, monkeypatch, tmp_path):
     user = User(name="Test Model User", email="model_test@test.edu")
     seeded_db.add(user)
     seeded_db.flush()
     topic = seeded_db.query(Topic).first()
 
-    # Because the existing model on disk has 11 features and FEATURE_COLUMNS now has 13 features,
+    # Simulate a legacy 11-feature model bundle in a temporary directory
+    import joblib
+    fake_model_file = tmp_path / "legacy_model.joblib"
+    legacy_bundle = {
+        "feature_columns": FEATURE_COLUMNS[:11],
+        "model": None,
+        "version": "1.0",
+    }
+    joblib.dump(legacy_bundle, fake_model_file)
+
+    monkeypatch.setattr("backend.app.predict.MODEL_PATH", str(fake_model_file))
+    monkeypatch.setattr("backend.app.predict._bundle", None)
+
+    # Because the existing model has 11 features and FEATURE_COLUMNS now has 13 features,
     # predict_forgetting must raise a clear RuntimeError requiring retraining
     with pytest.raises(RuntimeError) as exc_info:
         predict_forgetting(seeded_db, user.id, topic.id)
