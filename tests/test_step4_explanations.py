@@ -158,12 +158,12 @@ def test_directions_and_ranking(trained_bundle, synthetic_features):
     for f in res["positive_factors"]:
         assert f["contribution"] > 0
         assert f["direction"] == "higher_risk"
-        assert "higher predicted forgetting risk" in f["explanation"]
+        assert "contributes positively to the model's risk score" in f["explanation"]
 
     for f in res["negative_factors"]:
         assert f["contribution"] < 0
         assert f["direction"] == "lower_risk"
-        assert "lower predicted forgetting risk" in f["explanation"]
+        assert "contributes negatively to the model's risk score" in f["explanation"]
 
     # Positive factors ranked descending
     pos_contribs = [f["contribution"] for f in res["positive_factors"]]
@@ -373,73 +373,76 @@ def test_dashboard_api_returns_local_explanations():
 
 
 # ---------------------------------------------------------------------------
-# Step 4.3 Tests: Contextual Above/Below Cohort Average & Non-Causal Wording
+# Step 4.4A Tests: Contextual Above/Below Cohort Average & Non-Causal Wording
 # ---------------------------------------------------------------------------
 
 def test_above_and_below_average_wording_context():
     """
     Verifies that feature explanations explicitly contextualize whether
-    values are above or below the cohort baseline average, and never describe
-    below-average values (like 0 revisions or 15 mins study) as inherently protective.
+    values are above or below the training baseline average, and never describe
+    below-average values (like 0 revisions, low confidence, or 15 mins study)
+    as inherently beneficial or protective.
     """
     # 1. revision_frequency (beta = +0.0257, mean = 0.18)
     s_rev_zero = format_feature_sentence("revision_frequency", 0.0, -0.036)
-    assert "below cohort average" in s_rev_zero
+    assert "below the training average" in s_rev_zero
     assert "0.00 revisions/day" in s_rev_zero
-    assert "contributes less than average" in s_rev_zero
+    assert "contributes negatively to the model's risk score" in s_rev_zero
     assert "protective" not in s_rev_zero.lower()
-    assert "associated with lower predicted forgetting risk" in s_rev_zero
+    assert "beneficial" not in s_rev_zero.lower()
 
     s_rev_high = format_feature_sentence("revision_frequency", 0.50, 0.05)
-    assert "above the cohort average" in s_rev_high
-    assert "associated with higher predicted forgetting risk" in s_rev_high
+    assert "above the training average" in s_rev_high
+    assert "contributes positively to the model's risk score" in s_rev_high
 
     # 2. self_reported_confidence (beta = +0.0147, mean = 0.55)
     s_conf_low = format_feature_sentence("self_reported_confidence", 0.20, -0.04)
-    assert "below the cohort average" in s_conf_low
-    assert "contributing less to the model's risk score" in s_conf_low
-    assert "associated with lower predicted forgetting risk" in s_conf_low
+    assert "below the training average" in s_conf_low
+    assert "contributes negatively to the model's risk score" in s_conf_low
+    assert "protective" not in s_conf_low.lower()
+    assert "beneficial" not in s_conf_low.lower()
 
     s_conf_high = format_feature_sentence("self_reported_confidence", 0.85, 0.04)
-    assert "above cohort average" in s_conf_high
-    assert "associated with higher predicted forgetting risk" in s_conf_high
+    assert "above the training average" in s_conf_high
+    assert "contributes positively to the model's risk score" in s_conf_high
 
     # 3. time_spent_studying_min (beta = +0.1568, mean = 235.6)
     s_time_low = format_feature_sentence("time_spent_studying_min", 30.0, -0.21)
-    assert "below the cohort average" in s_time_low
-    assert "contributing less to the model's risk score" in s_time_low
-    assert "associated with lower predicted forgetting risk" in s_time_low
+    assert "below the training average" in s_time_low
+    assert "contributes negatively to the model's risk score" in s_time_low
+    assert "protective" not in s_time_low.lower()
+    assert "beneficial" not in s_time_low.lower()
 
     s_time_high = format_feature_sentence("time_spent_studying_min", 400.0, 0.17)
-    assert "above cohort average" in s_time_high
-    assert "associated with higher predicted forgetting risk" in s_time_high
+    assert "above the training average" in s_time_high
+    assert "contributes positively to the model's risk score" in s_time_high
 
     # 4. concurrent_topic_load (beta = -0.0409, mean = 44.2)
     s_load_low = format_feature_sentence("concurrent_topic_load", 5, 0.106)
-    assert "below the cohort average" in s_load_low
-    assert "associated with higher predicted forgetting risk" in s_load_low
+    assert "below the training average" in s_load_low
+    assert "contributes positively to the model's risk score" in s_load_low
 
     s_load_high = format_feature_sentence("concurrent_topic_load", 60, -0.04)
-    assert "above the cohort average" in s_load_high
-    assert "associated with lower predicted forgetting risk" in s_load_high
+    assert "above the training average" in s_load_high
+    assert "contributes negatively to the model's risk score" in s_load_high
 
     # 5. times_studied (beta = -0.4527, mean = 6.11)
     s_studied_low = format_feature_sentence("times_studied", 2, 0.64)
-    assert "below cohort average" in s_studied_low
-    assert "associated with higher predicted forgetting risk" in s_studied_low
+    assert "below the training average" in s_studied_low
+    assert "contributes positively to the model's risk score" in s_studied_low
 
     s_studied_high = format_feature_sentence("times_studied", 9, -0.45)
-    assert "above cohort average" in s_studied_high
-    assert "associated with lower predicted forgetting risk" in s_studied_high
+    assert "above the training average" in s_studied_high
+    assert "contributes negatively to the model's risk score" in s_studied_high
 
     # 6. days_since_last_studied (beta = +0.4283, mean = 2.67)
     s_days_high = format_feature_sentence("days_since_last_studied", 14, 2.44)
-    assert "above cohort average" in s_days_high
-    assert "associated with higher predicted forgetting risk" in s_days_high
+    assert "above the training average" in s_days_high
+    assert "contributes positively to the model's risk score" in s_days_high
 
     s_days_low = format_feature_sentence("days_since_last_studied", 1, -0.36)
-    assert "below cohort average" in s_days_low
-    assert "associated with lower predicted forgetting risk" in s_days_low
+    assert "below the training average" in s_days_low
+    assert "contributes negatively to the model's risk score" in s_days_low
 
 
 def test_zero_and_boundary_values():
@@ -455,11 +458,11 @@ def test_zero_and_boundary_values():
     # 0 concurrent load
     s_load0_pos = format_feature_sentence("concurrent_topic_load", 0, 0.12)
     assert "No other topics studied concurrently" in s_load0_pos
-    assert "associated with higher predicted forgetting risk" in s_load0_pos
+    assert "contributes positively to the model's risk score" in s_load0_pos
 
     s_load0_neutral = format_feature_sentence("concurrent_topic_load", 0, 0.0)
     assert "No other topics studied concurrently" in s_load0_neutral
-    assert "having a neutral contribution" in s_load0_neutral
+    assert "neutral contribution" in s_load0_neutral
 
     # Assessment: >= 60 days
     s_assess_far = format_feature_sentence("days_to_next_assessment", 75, -0.01)
