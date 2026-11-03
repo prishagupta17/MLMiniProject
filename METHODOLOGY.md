@@ -186,3 +186,63 @@ All randomness flows from a single `random.Random(cfg.random_seed)` root generat
 5. **Single-semester scope**: Study histories are confined to 2026-08-01 – 2026-11-30 and do not model prior knowledge or inter-semester carry-over.
 6. **Profile assignment is synthetic**: Real students do not self-identify as "crammerss" or "consistent" learners; these are modelling simplifications.
 7. **Replace with real data**: Simulated data should be replaced with real `LearningEvent` and `RecallEvent` records as soon as even a small cohort of real students uses the system.
+
+
+---
+
+## 4. Local, Topic-Specific Explainability (Step 4)
+
+### 4.1 Global Feature Importance vs. Local Explanation
+
+- **Global Feature Importance**: Describes which features the model generally relies on across the entire training dataset (e.g., overall weights or impurity decreases). It does NOT explain an individual student's prediction on a specific topic.
+- **Local Explanation**: Deconstructs the exact prediction for a specific (student, topic, timestamp) tuple, identifying which specific feature values pushed this individual prediction upward or downward relative to the model baseline.
+
+### 4.2 Linear Decomposition in Log-Odds Space
+
+The production model is a `LogisticRegression` classifier paired with `StandardScaler`.
+For an input feature vector $\mathbf{x} = [x_1, \dots, x_{13}]$, features are first standardized:
+
+$$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
+
+The model's logit (log-odds of forgetting, positive class $y=1$) is:
+
+$$\text{logit} = \beta_0 + \sum_{i=1}^{13} \beta_i z_i$$
+
+Where:
+- $\beta_0$ is the model intercept (`model.intercept_[0]`).
+- $\beta_i$ is the positive-class coefficient for feature $i$ (`model.coef_[0][i]`).
+- Each feature's local contribution is:
+
+$$\text{contribution}_i = \beta_i z_i$$
+
+### 4.3 Log-Odds Space vs. Probability Space
+
+- Contributions are strictly in **log-odds space**, NOT probability percentage points.
+- The mathematical relationship holds exactly:
+
+$$\beta_0 + \sum_{i=1}^{13} \text{contribution}_i = \text{logit}$$
+
+$$P(\text{forgot} = 1) = \sigma(\text{logit}) = \frac{1}{1 + e^{-\text{logit}}}$$
+
+- A positive contribution ($\text{contribution}_i > 0$) pushes the predicted log-odds (and therefore the predicted forgetting risk) upward relative to the baseline intercept.
+- A negative contribution ($\text{contribution}_i < 0$) pushes the predicted log-odds (and therefore the predicted forgetting risk) downward relative to the baseline intercept.
+- It is mathematically incorrect to interpret $\text{contribution}_i$ as a direct change in probability percentage (e.g. +5% risk), because the sigmoid transformation $\sigma(\cdot)$ is non-linear.
+
+### 4.4 Human-Readable Explanation Generation
+
+Each calculated contribution is translated into a student-friendly sentence according to documented rules:
+1. **Directional phrasing**: Positive contributions are labeled as "associated with higher predicted forgetting risk"; negative contributions are labeled as "associated with lower predicted forgetting risk".
+2. **Non-causal wording**: Sentences avoid causal claims (e.g. "causes forgetting" is forbidden; "associated with higher predicted risk" is strictly used).
+3. **Grammar and Boundary Accuracy**:
+   - Singular and plural units are respected ("1 day" vs "X days", "1 time" vs "X times").
+   - `has_upcoming_assessment = 0` never asserts that an upcoming assessment exists.
+   - Zero values are formatted cleanly (e.g. "No easily confusable topics flagged (score 0)").
+4. **Ranking & Thresholding**:
+   - Factors are ranked by absolute contribution magnitude $|\text{contribution}_i|$.
+   - Contributions below a significance threshold ($\tau = 0.005$) are classified as negligible to avoid over-interpreting minor numeric fluctuations.
+
+### 4.5 Limitations of Simulated Explanations
+
+1. **Synthetic data dependence**: The model coefficients $\beta_i$ reflect patterns in simulated student profiles (Step 3). These coefficients do not represent empirically measured human cognitive forgetting dynamics.
+2. **Correlation, not causation**: Features reflect statistical associations in the trained model; acting on an individual feature (e.g. logging dummy confidence) will not causally change actual human retention.
+3. **Log-odds nonlinearity**: Because explanations reside in logit space, the marginal impact of a contribution on final probability depends on where the logit lies along the sigmoid curve.

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Any, Dict
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
@@ -76,13 +76,35 @@ class RecallEventCreate(BaseModel):
     is_upcoming_assessment_prep: bool = False
 
 
+class FactorExplanation(BaseModel):
+    factor: str
+    value: Any
+    contribution: float
+    direction: str
+    explanation: str
+    model_weight: Optional[float] = None
+
+
+class LocalExplanation(BaseModel):
+    explanation_space: str = "log_odds"
+    intercept: float
+    predicted_log_odds: float
+    reconstructed_probability: float
+    summary: Optional[str] = None
+    positive_factors: List[FactorExplanation] = []
+    negative_factors: List[FactorExplanation] = []
+    top_factors: List[FactorExplanation] = []
+    all_factors: List[FactorExplanation] = []
+
+
 class TopicRisk(BaseModel):
     topic_id: int
     topic_name: str
     module_name: str
     forgetting_probability: float
     retention_status: str
-    top_factors: list
+    top_factors: List[Any] = []
+    local_explanation: Optional[LocalExplanation] = None
 
 
 class DashboardOut(BaseModel):

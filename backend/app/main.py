@@ -180,6 +180,7 @@ def get_dashboard(user_id: int, db: Session = Depends(get_db)):
             forgetting_probability=result["forgetting_probability"],
             retention_status=result["retention_status"],
             top_factors=result["top_factors"],
+            local_explanation=result.get("local_explanation"),
         ))
 
     topics_out.sort(key=lambda t: -t.forgetting_probability)

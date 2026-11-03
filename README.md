@@ -115,6 +115,7 @@ backend/
     features.py          — feature engineering
     train.py             — trains + saves the ML model
     predict.py            — live prediction for a user/topic
+    explainability.py     — local, topic-specific prediction explanations
     topic_enrichment.py  — LLM difficulty + confusable-topics note
     difficulty_refine.py — crowd-sourced difficulty blending
     main.py               — the API itself

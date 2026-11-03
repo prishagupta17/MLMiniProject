@@ -5,6 +5,7 @@ from typing import Optional, Dict, Any
 import pandas as pd
 from sqlalchemy.orm import Session
 from .models import LearningEvent, Topic
+from .explainability import explain_prediction
 from .features import (
     FEATURE_COLUMNS,
     _prereq_completion_ratio,
@@ -102,13 +103,18 @@ def predict_forgetting(db: Session, user_id: int, topic_id: int, as_of: Optional
         X = bundle["scaler"].transform(X)
     prob_forgot = float(bundle["model"].predict_proba(X)[0][1])
 
-    top_factors = []
-    for feat, weight in list(bundle.get("importances", {}).items())[:5]:
-        top_factors.append({
-            "factor": feat,
-            "value": round(features[feat], 2),
-            "model_weight": round(float(weight), 4),
-        })
+    try:
+        explanation = explain_prediction(bundle, features)
+        top_factors = explanation["top_factors"]
+    except Exception:
+        explanation = None
+        top_factors = []
+        for feat, weight in list(bundle.get("importances", {}).items())[:5]:
+            top_factors.append({
+                "factor": feat,
+                "value": round(features[feat], 2),
+                "model_weight": round(float(weight), 4),
+            })
 
     return {
         "topic_id": topic_id,
@@ -119,5 +125,6 @@ def predict_forgetting(db: Session, user_id: int, topic_id: int, as_of: Optional
             "retained"
         ),
         "top_factors": top_factors,
+        "local_explanation": explanation,
         "raw_features": features,
     }
