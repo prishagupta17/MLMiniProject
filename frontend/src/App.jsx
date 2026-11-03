@@ -98,14 +98,20 @@ export default function App() {
     fetchDashboard();
   }, [fetchDashboard]);
 
+  const [lastActiveTopicId, setLastActiveTopicId] = useState(null);
+
   // Modal Handlers
   const handleOpenStudy = (topicId = null) => {
-    setStudyTopicId(topicId);
+    const targetId = topicId || lastActiveTopicId;
+    setStudyTopicId(targetId);
+    if (topicId) setLastActiveTopicId(topicId);
     setStudyModalOpen(true);
   };
 
   const handleOpenSelfCheck = (topicId = null) => {
-    setSelfCheckTopicId(topicId);
+    const targetId = topicId || lastActiveTopicId;
+    setSelfCheckTopicId(targetId);
+    if (topicId) setLastActiveTopicId(topicId);
     setSelfCheckModalOpen(true);
   };
 
@@ -287,6 +293,7 @@ export default function App() {
           user={selectedUser}
           topics={allTopics}
           preselectedTopicId={studyTopicId}
+          dashboardData={dashboardData}
           onClose={() => setStudyModalOpen(false)}
           onSuccess={fetchDashboard}
         />

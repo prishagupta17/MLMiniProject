@@ -9,7 +9,8 @@ import {
   Search,
   Sparkles,
   Layers,
-  GraduationCap
+  GraduationCap,
+  Info
 } from 'lucide-react';
 import { api } from '../api';
 
@@ -48,9 +49,14 @@ export default function CoursesScreen({
         if (!isMounted) return;
         setModules(mods);
 
-        const expMap = {};
-        mods.forEach((m) => { expMap[m.id] = true; });
-        setExpandedModules(expMap);
+        // Keep current expanded state or expand all if first load
+        setExpandedModules((prev) => {
+          const exp = { ...prev };
+          mods.forEach((m) => {
+            if (exp[m.id] === undefined) exp[m.id] = true;
+          });
+          return exp;
+        });
 
         const topicsPromises = mods.map(async (m) => {
           const tList = await api.getModuleTopics(m.id);
@@ -88,7 +94,7 @@ export default function CoursesScreen({
             Curriculum & Topics
           </h2>
           <p className="text-xs text-slate-500 font-medium">
-            Browse through your course topics and see what you remember best
+            Browse through your course topics and track retention progress
           </p>
         </div>
 
@@ -102,6 +108,25 @@ export default function CoursesScreen({
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3.5 py-2 bg-white border border-[#EDE9FE] rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-card"
           />
+        </div>
+      </div>
+
+      {/* Retention Criteria Explainer Banner */}
+      <div className="p-4 rounded-2xl bg-[#FAF9FF] border border-[#EDE9FE] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2 text-slate-700 font-medium">
+          <Info className="w-4 h-4 text-violet-600 shrink-0" />
+          <span><strong>Retention Status Guide:</strong> How the model evaluates your recall:</span>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[11px]" title="Forgetting probability under 35%">
+            Remembered: &lt; 35% risk
+          </span>
+          <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[11px]" title="Forgetting probability between 35% and 60%">
+            Review Soon: 35% – 60%
+          </span>
+          <span className="px-2.5 py-1 rounded-lg bg-violet-100 text-violet-800 font-bold text-[11px]" title="Forgetting probability 60% or higher">
+            Needs Refresher: ≥ 60%
+          </span>
         </div>
       </div>
 
@@ -159,7 +184,6 @@ export default function CoursesScreen({
           {modules.map((mod) => {
             const allTopics = topicsByModule[mod.id] || [];
             
-            // Filter by search and retention filter
             const filteredTopics = allTopics.filter((t) => {
               if (searchQuery && !t.name.toLowerCase().includes(searchQuery.toLowerCase())) {
                 return false;
@@ -221,6 +245,7 @@ export default function CoursesScreen({
                       filteredTopics.map((topic) => {
                         const riskInfo = studiedMap[topic.id];
                         const isStudied = !!riskInfo;
+                        const riskPct = isStudied ? Math.round(riskInfo.forgetting_probability * 100) : null;
 
                         return (
                           <div
@@ -235,13 +260,14 @@ export default function CoursesScreen({
                                 {isStudied ? (
                                   <span className={
                                     riskInfo.retention_status === 'high_risk'
-                                      ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-100 text-violet-800'
+                                      ? 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800'
                                       : riskInfo.retention_status === 'moderate_risk'
-                                      ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200'
-                                      : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                      ? 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200'
+                                      : 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200'
                                   }>
-                                    {riskInfo.retention_status === 'high_risk' ? 'Needs Refresher' :
-                                     riskInfo.retention_status === 'moderate_risk' ? 'Review Soon' : 'Remembered'}
+                                    {riskInfo.retention_status === 'high_risk' ? `Needs Refresher (${riskPct}%)` :
+                                     riskInfo.retention_status === 'moderate_risk' ? `Review Soon (${riskPct}%)` : 
+                                     `Remembered (${riskPct}%)`}
                                   </span>
                                 ) : (
                                   <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
