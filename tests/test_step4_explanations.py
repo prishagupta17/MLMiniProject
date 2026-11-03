@@ -370,3 +370,153 @@ def test_dashboard_api_returns_local_explanations():
     assert "contribution" in factor_entry
     assert "direction" in factor_entry
     assert "explanation" in factor_entry
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3 Tests: Contextual Above/Below Cohort Average & Non-Causal Wording
+# ---------------------------------------------------------------------------
+
+def test_above_and_below_average_wording_context():
+    """
+    Verifies that feature explanations explicitly contextualize whether
+    values are above or below the cohort baseline average, and never describe
+    below-average values (like 0 revisions or 15 mins study) as inherently protective.
+    """
+    # 1. revision_frequency (beta = +0.0257, mean = 0.18)
+    s_rev_zero = format_feature_sentence("revision_frequency", 0.0, -0.036)
+    assert "below cohort average" in s_rev_zero
+    assert "0.00 revisions/day" in s_rev_zero
+    assert "contributes less than average" in s_rev_zero
+    assert "protective" not in s_rev_zero.lower()
+    assert "associated with lower predicted forgetting risk" in s_rev_zero
+
+    s_rev_high = format_feature_sentence("revision_frequency", 0.50, 0.05)
+    assert "above the cohort average" in s_rev_high
+    assert "associated with higher predicted forgetting risk" in s_rev_high
+
+    # 2. self_reported_confidence (beta = +0.0147, mean = 0.55)
+    s_conf_low = format_feature_sentence("self_reported_confidence", 0.20, -0.04)
+    assert "below the cohort average" in s_conf_low
+    assert "contributing less to the model's risk score" in s_conf_low
+    assert "associated with lower predicted forgetting risk" in s_conf_low
+
+    s_conf_high = format_feature_sentence("self_reported_confidence", 0.85, 0.04)
+    assert "above cohort average" in s_conf_high
+    assert "associated with higher predicted forgetting risk" in s_conf_high
+
+    # 3. time_spent_studying_min (beta = +0.1568, mean = 235.6)
+    s_time_low = format_feature_sentence("time_spent_studying_min", 30.0, -0.21)
+    assert "below the cohort average" in s_time_low
+    assert "contributing less to the model's risk score" in s_time_low
+    assert "associated with lower predicted forgetting risk" in s_time_low
+
+    s_time_high = format_feature_sentence("time_spent_studying_min", 400.0, 0.17)
+    assert "above cohort average" in s_time_high
+    assert "associated with higher predicted forgetting risk" in s_time_high
+
+    # 4. concurrent_topic_load (beta = -0.0409, mean = 44.2)
+    s_load_low = format_feature_sentence("concurrent_topic_load", 5, 0.106)
+    assert "below the cohort average" in s_load_low
+    assert "associated with higher predicted forgetting risk" in s_load_low
+
+    s_load_high = format_feature_sentence("concurrent_topic_load", 60, -0.04)
+    assert "above the cohort average" in s_load_high
+    assert "associated with lower predicted forgetting risk" in s_load_high
+
+    # 5. times_studied (beta = -0.4527, mean = 6.11)
+    s_studied_low = format_feature_sentence("times_studied", 2, 0.64)
+    assert "below cohort average" in s_studied_low
+    assert "associated with higher predicted forgetting risk" in s_studied_low
+
+    s_studied_high = format_feature_sentence("times_studied", 9, -0.45)
+    assert "above cohort average" in s_studied_high
+    assert "associated with lower predicted forgetting risk" in s_studied_high
+
+    # 6. days_since_last_studied (beta = +0.4283, mean = 2.67)
+    s_days_high = format_feature_sentence("days_since_last_studied", 14, 2.44)
+    assert "above cohort average" in s_days_high
+    assert "associated with higher predicted forgetting risk" in s_days_high
+
+    s_days_low = format_feature_sentence("days_since_last_studied", 1, -0.36)
+    assert "below cohort average" in s_days_low
+    assert "associated with lower predicted forgetting risk" in s_days_low
+
+
+def test_zero_and_boundary_values():
+    """
+    Verifies clean and graceful handling of zeros, missing values, and extreme boundaries.
+    """
+    # 0 days elapsed
+    s_day0_pos = format_feature_sentence("days_since_last_studied", 0, 0.1)
+    assert "0 days ago" in s_day0_pos
+    s_day0_neg = format_feature_sentence("days_since_last_studied", 0, -0.1)
+    assert "0 days ago" in s_day0_neg
+
+    # 0 concurrent load
+    s_load0_pos = format_feature_sentence("concurrent_topic_load", 0, 0.12)
+    assert "No other topics studied concurrently" in s_load0_pos
+    assert "associated with higher predicted forgetting risk" in s_load0_pos
+
+    s_load0_neutral = format_feature_sentence("concurrent_topic_load", 0, 0.0)
+    assert "No other topics studied concurrently" in s_load0_neutral
+    assert "having a neutral contribution" in s_load0_neutral
+
+    # Assessment: >= 60 days
+    s_assess_far = format_feature_sentence("days_to_next_assessment", 75, -0.01)
+    assert "60 or more days away" in s_assess_far
+
+    # Missing / None values should not raise exceptions
+    for col in FEATURE_COLUMNS:
+        s_none_pos = format_feature_sentence(col, None, 0.05)
+        assert isinstance(s_none_pos, str)
+        s_none_neg = format_feature_sentence(col, None, -0.05)
+        assert isinstance(s_none_neg, str)
+        s_none_zero = format_feature_sentence(col, None, 0.0)
+        assert isinstance(s_none_zero, str)
+
+
+def test_inactive_features_filtered_from_top_factors(trained_bundle, synthetic_features):
+    """
+    Verifies that the 4 inactive zero-coefficient features:
+      is_first_exposure, universal_difficulty, confusability_score, prerequisite_completion_ratio
+    are excluded from positive_factors, negative_factors, and top_factors,
+    while remaining present in all_factors with neutral direction.
+    """
+    res = explain_prediction(trained_bundle, synthetic_features, max_positive=5, max_negative=5)
+
+    inactive_cols = {
+        "is_first_exposure",
+        "universal_difficulty",
+        "confusability_score",
+        "prerequisite_completion_ratio",
+    }
+
+    # Top factors must NOT contain any inactive features
+    top_factor_names = {f["factor"] for f in res["top_factors"]}
+    assert inactive_cols.isdisjoint(top_factor_names)
+
+    pos_factor_names = {f["factor"] for f in res["positive_factors"]}
+    assert inactive_cols.isdisjoint(pos_factor_names)
+
+    neg_factor_names = {f["factor"] for f in res["negative_factors"]}
+    assert inactive_cols.isdisjoint(neg_factor_names)
+
+    # All factors must list them as neutral with zero contribution
+    all_factor_map = {f["factor"]: f for f in res["all_factors"]}
+    for inact in inactive_cols:
+        assert inact in all_factor_map
+        assert all_factor_map[inact]["contribution"] == 0.0
+        assert all_factor_map[inact]["direction"] == "neutral"
+        assert "neutral contribution" in all_factor_map[inact]["explanation"]
+
+
+def test_non_causal_phrasing_strictly_enforced():
+    """
+    Verifies that explanations across all 13 features avoid unvalidated causal claims.
+    """
+    banned_words = ["cause", "causes", "caused", "causing", "prevent", "protect"]
+    for col in FEATURE_COLUMNS:
+        for contrib in [-0.5, 0.0, 0.5]:
+            sent = format_feature_sentence(col, 2, contrib)
+            for bw in banned_words:
+                assert bw not in sent.lower(), f"Banned word '{bw}' found in explanation for {col}: {sent}"

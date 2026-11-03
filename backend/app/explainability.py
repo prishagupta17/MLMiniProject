@@ -25,14 +25,42 @@ from .features import FEATURE_COLUMNS
 # Threshold below which a feature contribution is considered negligible
 DEFAULT_CONTRIBUTION_THRESHOLD = 0.005
 
+# Verified production model scaler means (from backend/models/forgetting_model.joblib)
+PROD_FEATURE_MEANS: Dict[str, float] = {
+    "times_studied": 6.11,
+    "is_first_exposure": 0.00,
+    "days_since_last_studied": 2.67,
+    "revision_frequency": 0.18,
+    "self_reported_confidence": 0.55,
+    "universal_difficulty": 0.50,
+    "topic_importance": 0.81,
+    "time_spent_studying_min": 235.56,
+    "confusability_score": 0.00,
+    "prerequisite_completion_ratio": 1.00,
+    "concurrent_topic_load": 44.21,
+    "days_to_next_assessment": 17.06,
+    "has_upcoming_assessment": 0.85,
+}
 
-def format_feature_sentence(feature_name: str, value: Any, contribution: float) -> str:
+
+def format_feature_sentence(
+    feature_name: str,
+    value: Any,
+    contribution: float,
+    mean: Optional[float] = None,
+) -> str:
     """
-    Generate student-friendly, non-causal sentences based on actual feature values
-    and calculated signed contributions.
+    Generate student-friendly, non-causal sentences based on actual feature values,
+    cohort baseline averages, and calculated signed contributions.
 
-    Wording strictly uses 'associated with higher/lower predicted forgetting risk',
-    never making unvalidated causal claims.
+    Key principles:
+    1. Contextualize whether the raw value is above, below, or equal to the cohort average.
+    2. Clearly describe whether the mathematical contribution increases or decreases predicted log-odds.
+    3. Never describe a below-average value as inherently protective (e.g., zero revisions
+       or low study time is not protective; it contributes less to the model's risk score
+       relative to the cohort baseline).
+    4. Strictly avoid causal claims (uses 'associated with higher/lower predicted forgetting risk').
+    5. Handle zero, None, missing, and boundary values gracefully.
     """
     if contribution > 0:
         dir_phrase = "associated with higher predicted forgetting risk"
@@ -41,106 +69,169 @@ def format_feature_sentence(feature_name: str, value: Any, contribution: float) 
     else:
         dir_phrase = "having a neutral contribution to predicted forgetting risk"
 
+    if mean is None:
+        mean = PROD_FEATURE_MEANS.get(feature_name)
+
+    mean_fmt = f"{mean:.2f}" if mean is not None and mean < 1.0 else (f"{mean:.1f}" if mean is not None else "")
+
     if feature_name == "days_since_last_studied":
-        days = int(value)
+        days = int(value) if value is not None else 0
         unit = "day" if days == 1 else "days"
+        ref_mean = f", above cohort average of {mean_fmt} days" if (mean is not None and days > mean) else (
+            f", below cohort average of {mean_fmt} days" if mean is not None else ""
+        )
         if contribution > 0:
             if days == 0:
                 return f"Studied today (0 days ago), which in this model context is {dir_phrase}."
-            return f"Not revised for {days} {unit} ({days} {unit} ago), which is {dir_phrase}."
+            return f"Not revised for {days} {unit} ({days} {unit} ago{ref_mean}), which is {dir_phrase}."
+        elif contribution < 0:
+            if days == 0:
+                return f"Studied today (0 days ago, recently studied relative to cohort average of {mean_fmt} days), which is {dir_phrase}."
+            return f"Recently studied ({days} {unit} ago{ref_mean}), which is {dir_phrase}."
         else:
-            return f"Recently studied ({days} {unit} ago), which is {dir_phrase}."
+            return f"Studied {days} {unit} ago (matching cohort average of {mean_fmt} days), {dir_phrase}."
 
     elif feature_name == "times_studied":
-        times = int(value)
+        times = int(value) if value is not None else 0
         unit = "time" if times == 1 else "times"
         if contribution > 0:
-            return f"Studied only {times} {unit}, which is {dir_phrase}."
+            return f"Studied only {times} {unit}, below cohort average of {mean_fmt} times, which is {dir_phrase}."
+        elif contribution < 0:
+            return f"Studied {times} {unit}, above cohort average of {mean_fmt} times, which is {dir_phrase}."
         else:
-            return f"Studied {times} {unit}, which is {dir_phrase}."
+            return f"Studied {times} {unit}, matching cohort average of {mean_fmt} times, {dir_phrase}."
 
     elif feature_name == "is_first_exposure":
-        if int(value) == 1:
-            return f"This is the first recorded exposure to this topic, which is {dir_phrase}."
+        first_exp = int(value) if value is not None else 0
+        if first_exp == 1:
+            if contribution != 0:
+                return f"This is the first recorded exposure to this topic, which is {dir_phrase}."
+            return f"This is the first recorded exposure to this topic (baseline cohort prior), {dir_phrase}."
         else:
-            return f"Topic has been studied previously (not first exposure), which is {dir_phrase}."
+            if contribution != 0:
+                return f"Topic has been studied previously (not first exposure), which is {dir_phrase}."
+            return f"Topic has been studied previously (not first exposure, baseline cohort prior), {dir_phrase}."
 
     elif feature_name == "revision_frequency":
-        freq = round(float(value), 2)
+        freq = round(float(value), 2) if value is not None else 0.0
         if contribution > 0:
-            return f"Low revision frequency ({freq:.2f} revisions/day), which is {dir_phrase}."
+            return f"Revision frequency of {freq:.2f} revisions/day is above the cohort average of {mean_fmt} revisions/day, which is {dir_phrase}."
+        elif contribution < 0:
+            if freq == 0.0:
+                return f"Revision frequency is 0.00 revisions/day (below cohort average of {mean_fmt} revisions/day); this contributes less than average to the model's risk score and is {dir_phrase} relative to the baseline."
+            return f"Revision frequency of {freq:.2f} revisions/day is below the cohort average of {mean_fmt} revisions/day; this contributes less than average to the model's risk score and is {dir_phrase} relative to the baseline."
         else:
-            return f"Revision frequency of {freq:.2f} revisions/day is {dir_phrase}."
+            return f"Revision frequency of {freq:.2f} revisions/day matches the cohort average, {dir_phrase}."
 
     elif feature_name == "self_reported_confidence":
-        conf = round(float(value), 2)
+        conf = round(float(value), 2) if value is not None else 0.0
         if contribution > 0:
-            return f"Self-reported confidence rating is {conf:.2f}, which is {dir_phrase}."
+            return f"Self-reported confidence rating is {conf:.2f} (above cohort average of {mean_fmt}), which in this model is {dir_phrase}."
+        elif contribution < 0:
+            return f"Self-reported confidence rating of {conf:.2f} is below the cohort average of {mean_fmt}, contributing less to the model's risk score and {dir_phrase} relative to the baseline."
         else:
-            return f"Self-reported confidence rating of {conf:.2f} is {dir_phrase}."
+            return f"Self-reported confidence rating of {conf:.2f} matches the cohort average, {dir_phrase}."
 
     elif feature_name == "universal_difficulty":
-        diff = round(float(value), 2)
+        diff = round(float(value), 2) if value is not None else 0.50
         if contribution > 0:
-            return f"Topic difficulty rating is {diff:.2f}, which is {dir_phrase}."
+            return f"Topic difficulty rating is {diff:.2f} (above baseline prior of {mean_fmt}), which is {dir_phrase}."
+        elif contribution < 0:
+            return f"Topic difficulty rating is {diff:.2f} (below baseline prior of {mean_fmt}), which is {dir_phrase}."
         else:
-            return f"Topic difficulty rating of {diff:.2f} is {dir_phrase}."
+            return f"Topic difficulty rating of {diff:.2f} (baseline syllabus prior), {dir_phrase}."
 
     elif feature_name == "topic_importance":
-        imp = round(float(value), 2)
+        imp = round(float(value), 2) if value is not None else 0.0
         if contribution > 0:
-            return f"Course exam importance weight is {imp:.2f}, which is {dir_phrase}."
+            return f"Course exam importance weight is {imp:.2f} (below cohort average of {mean_fmt}), which is {dir_phrase}."
+        elif contribution < 0:
+            return f"Course exam importance weight of {imp:.2f} is above cohort average of {mean_fmt}, which is {dir_phrase}."
         else:
-            return f"Course exam importance weight of {imp:.2f} is {dir_phrase}."
+            return f"Course exam importance weight of {imp:.2f} matches the cohort average, {dir_phrase}."
 
     elif feature_name == "time_spent_studying_min":
-        mins = round(float(value), 1)
+        mins = round(float(value), 1) if value is not None else 0.0
         if contribution > 0:
-            return f"Cumulative study time is {mins} minutes, which is {dir_phrase}."
+            return f"Cumulative study time is {mins:.1f} minutes (above cohort average of {mean_fmt} minutes), which in this model fit is {dir_phrase}."
+        elif contribution < 0:
+            return f"Cumulative study time of {mins:.1f} minutes is below the cohort average of {mean_fmt} minutes, contributing less to the model's risk score and {dir_phrase} relative to the baseline."
         else:
-            return f"Cumulative study time of {mins} minutes is {dir_phrase}."
+            return f"Cumulative study time of {mins:.1f} minutes matches the cohort average, {dir_phrase}."
 
     elif feature_name == "confusability_score":
-        score = int(value)
+        score = int(value) if value is not None else 0
         if score == 0:
-            if contribution > 0:
-                return f"Confusability score is 0, which is {dir_phrase}."
-            return f"No easily confusable topics flagged (score 0), which is {dir_phrase}."
+            if contribution != 0:
+                return f"No easily confusable topics flagged (score 0), which is {dir_phrase}."
+            return f"No easily confusable topics flagged (score 0, baseline syllabus prior), {dir_phrase}."
         elif score == 1:
-            return f"Easily confused with 1 other topic, which is {dir_phrase}."
+            if contribution != 0:
+                return f"Easily confused with 1 other topic, which is {dir_phrase}."
+            return f"Easily confused with 1 other topic (score 1), {dir_phrase}."
         else:
-            return f"Easily confused with {score} other topics, which is {dir_phrase}."
+            if contribution != 0:
+                return f"Easily confused with {score} other topics, which is {dir_phrase}."
+            return f"Easily confused with {score} other topics (score {score}), {dir_phrase}."
 
     elif feature_name == "prerequisite_completion_ratio":
-        pct = int(round(float(value) * 100))
+        pct = int(round(float(value) * 100)) if value is not None else 100
         if pct < 100:
-            return f"Prerequisites are only partially completed ({pct}%), which is {dir_phrase}."
+            if contribution != 0:
+                return f"Prerequisites are only partially completed ({pct}%), which is {dir_phrase}."
+            return f"Prerequisites are partially completed ({pct}%), {dir_phrase}."
         else:
-            return f"Prerequisites are fully completed (100%), which is {dir_phrase}."
+            if contribution != 0:
+                return f"Prerequisites are fully completed (100%), which is {dir_phrase}."
+            return f"Prerequisites are fully completed (100%, baseline syllabus prior), {dir_phrase}."
 
     elif feature_name == "concurrent_topic_load":
-        load = int(value)
+        load = int(value) if value is not None else 0
         unit = "topic" if load == 1 else "topics"
         if load == 0:
-            return f"No other topics studied concurrently this week, which is {dir_phrase}."
-        elif contribution > 0:
-            return f"Several other topics ({load} {unit}) are being studied concurrently this week, which is {dir_phrase}."
+            if contribution > 0:
+                return f"No other topics studied concurrently this week (0 topics, below cohort average of {mean_fmt} topics), which in this model's correlation structure is {dir_phrase}."
+            elif contribution < 0:
+                return f"No other topics studied concurrently this week (0 topics), which is {dir_phrase}."
+            else:
+                return f"No other topics studied concurrently this week, {dir_phrase}."
         else:
-            return f"Concurrent study load of {load} other {unit} this week is {dir_phrase}."
+            if contribution > 0:
+                return f"Concurrent study load of {load} {unit} this week is below the cohort average of {mean_fmt} topics, which in this model's correlation structure is {dir_phrase}."
+            elif contribution < 0:
+                return f"Concurrent study load of {load} {unit} this week is above the cohort average of {mean_fmt} topics, which is {dir_phrase}."
+            else:
+                return f"Concurrent study load of {load} {unit} this week matches the cohort average, {dir_phrase}."
 
     elif feature_name == "days_to_next_assessment":
-        days = int(value)
+        days = int(value) if value is not None else 60
         unit = "day" if days == 1 else "days"
         if days >= 60:
-            return f"Next covering assessment is 60 or more days away, which is {dir_phrase}."
+            return f"Next covering assessment is 60 or more days away (above cohort average of {mean_fmt} days), which is {dir_phrase}."
         else:
-            return f"Upcoming assessment in {days} {unit}, which is {dir_phrase}."
+            if contribution > 0:
+                return f"Upcoming assessment in {days} {unit} (below cohort average of {mean_fmt} days), which is {dir_phrase}."
+            elif contribution < 0:
+                return f"Upcoming assessment in {days} {unit} (above cohort average of {mean_fmt} days), which is {dir_phrase}."
+            else:
+                return f"Upcoming assessment in {days} {unit} (matching cohort average of {mean_fmt} days), {dir_phrase}."
 
     elif feature_name == "has_upcoming_assessment":
-        if int(value) == 1:
-            return f"Has an upcoming assessment covering this topic within the planning window, which is {dir_phrase}."
+        has_up = int(value) if value is not None else 0
+        if has_up == 1:
+            if contribution > 0:
+                return f"Has an upcoming assessment covering this topic within the planning window (value 1, above cohort average of {mean_fmt}), which is {dir_phrase}."
+            elif contribution < 0:
+                return f"Has an upcoming assessment covering this topic within the planning window (value 1), which is {dir_phrase}."
+            else:
+                return f"Has an upcoming assessment covering this topic within the planning window, {dir_phrase}."
         else:
-            return f"No upcoming assessment is scheduled in the immediate 7-day window, which is {dir_phrase}." 
+            if contribution < 0:
+                return f"No upcoming assessment is scheduled in the immediate 7-day window (value 0, below cohort average of {mean_fmt}), contributing less to the model's risk score and {dir_phrase} relative to the baseline."
+            elif contribution > 0:
+                return f"No upcoming assessment is scheduled in the immediate 7-day window (value 0), which in this model context is {dir_phrase}."
+            else:
+                return f"No upcoming assessment is scheduled in the immediate 7-day window, {dir_phrase}."
 
     return f"Feature '{feature_name}' has value {value}, which is {dir_phrase}."
 
@@ -227,6 +318,10 @@ def explain_prediction(
 
     contributions = decomposition["contributions"]
     feature_cols = bundle.get("feature_columns", FEATURE_COLUMNS)
+    scaler = bundle.get("scaler")
+    means = {}
+    if scaler is not None and hasattr(scaler, "mean_"):
+        means = {col: float(scaler.mean_[i]) for i, col in enumerate(feature_cols)}
 
     all_factors: List[Dict[str, Any]] = []
     positive_candidates: List[Dict[str, Any]] = []
@@ -236,7 +331,8 @@ def explain_prediction(
         val = features.get(col)
         contrib = contributions.get(col, 0.0)
         direction = "higher_risk" if contrib > 0 else ("lower_risk" if contrib < 0 else "neutral")
-        sentence = format_feature_sentence(col, val, contrib)
+        feat_mean = means.get(col, PROD_FEATURE_MEANS.get(col))
+        sentence = format_feature_sentence(col, val, contrib, mean=feat_mean)
 
         factor_data = {
             "factor": col,
