@@ -8,6 +8,7 @@ from .models import LearningEvent, Topic
 from .explainability import explain_prediction
 from .features import (
     FEATURE_COLUMNS,
+    apply_feature_transforms,
     _prereq_completion_ratio,
     _concurrent_topic_load,
     _confusability_score,
@@ -22,8 +23,13 @@ _bundle = None
 MODEL_FEATURE_VERSION = "2.0"
 
 
-def _load_bundle():
+def _load_bundle(model_path: Optional[str] = None):
     global _bundle
+    if model_path is not None:
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"No trained model found at {model_path}.")
+        return joblib.load(model_path)
+
     if _bundle is None:
         if not os.path.exists(MODEL_PATH):
             raise FileNotFoundError("No trained model found. Run `python -m app.train` first.")
@@ -83,8 +89,14 @@ def compute_current_features(db: Session, user_id: int, topic_id: int, as_of: Op
     }
 
 
-def predict_forgetting(db: Session, user_id: int, topic_id: int, as_of: Optional[datetime] = None):
-    bundle = _load_bundle()
+def predict_forgetting(
+    db: Session,
+    user_id: int,
+    topic_id: int,
+    as_of: Optional[datetime] = None,
+    bundle: Optional[Dict[str, Any]] = None,
+):
+    bundle = bundle or _load_bundle()
 
     # Feature version validation
     model_features = bundle.get("feature_columns", [])
@@ -98,10 +110,15 @@ def predict_forgetting(db: Session, user_id: int, topic_id: int, as_of: Optional
     if features is None:
         return None
 
-    X = pd.DataFrame([features])[FEATURE_COLUMNS]
+    X_raw = pd.DataFrame([features])[FEATURE_COLUMNS]
+    transforms = bundle.get("feature_transforms")
+    X_trans = apply_feature_transforms(X_raw, transforms)
+
     if bundle.get("scaler") is not None:
-        X = bundle["scaler"].transform(X)
-    prob_forgot = float(bundle["model"].predict_proba(X)[0][1])
+        X_scaled = bundle["scaler"].transform(X_trans)
+    else:
+        X_scaled = X_trans.values
+    prob_forgot = float(bundle["model"].predict_proba(X_scaled)[0][1])
 
     try:
         explanation = explain_prediction(bundle, features)

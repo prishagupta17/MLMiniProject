@@ -5,6 +5,7 @@ before that event's timestamp (zero label leakage).
 """
 from datetime import datetime, timedelta
 from typing import Tuple, Dict, Any, Optional
+import numpy as np
 import pandas as pd
 from sqlalchemy.orm import Session
 
@@ -27,6 +28,29 @@ FEATURE_COLUMNS = [
 ]
 
 CONCURRENT_WINDOW_DAYS = 7
+
+
+def apply_feature_transforms(
+    df: pd.DataFrame,
+    transforms: Optional[Dict[str, str]] = None,
+) -> pd.DataFrame:
+    """
+    Apply declared mathematical transformations to a copy of the feature DataFrame.
+    Guarantees raw feature data remains unmodified and prevents double transformations.
+    """
+    if not transforms:
+        return df.copy()
+
+    df_out = df.copy()
+    for col, transform_name in transforms.items():
+        if col in df_out.columns:
+            if transform_name == "log1p":
+                if (df_out[col] < 0).any():
+                    raise ValueError(f"Feature '{col}' contains negative values, cannot apply log1p.")
+                df_out[col] = np.log1p(df_out[col].astype(float))
+            else:
+                raise ValueError(f"Unknown feature transform '{transform_name}' for column '{col}'.")
+    return df_out
 
 
 def _prereq_completion_ratio(db: Session, user_id: int, topic: Topic, as_of: datetime) -> float:

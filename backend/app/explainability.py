@@ -20,7 +20,7 @@ import math
 from typing import Any, Dict, List, Optional, Tuple
 import pandas as pd
 
-from .features import FEATURE_COLUMNS
+from .features import FEATURE_COLUMNS, apply_feature_transforms
 
 # Threshold below which a feature contribution is considered negligible
 DEFAULT_CONTRIBUTION_THRESHOLD = 0.005
@@ -205,7 +205,8 @@ def compute_logistic_regression_contributions(
     Calculate exact linear contributions for a Logistic Regression model.
 
     For each feature i:
-      scaled_val_i = (features[feature_name] - mean_i) / std_i  (if scaler present)
+      transformed_val_i = apply_feature_transforms(features[feature_name])
+      scaled_val_i = (transformed_val_i - mean_i) / std_i  (if scaler present)
       contribution_i = coefficient_i * scaled_val_i
 
     Log-odds identity:
@@ -219,11 +220,13 @@ def compute_logistic_regression_contributions(
     feature_cols = bundle.get("feature_columns", FEATURE_COLUMNS)
 
     X_df = pd.DataFrame([features])[feature_cols]
+    transforms = bundle.get("feature_transforms")
+    X_trans = apply_feature_transforms(X_df, transforms)
 
     if scaler is not None:
-        X_scaled = scaler.transform(X_df)[0]
+        X_scaled = scaler.transform(X_trans)[0]
     else:
-        X_scaled = X_df.values[0]
+        X_scaled = X_trans.values[0]
 
     # Positive class (forgot = 1) coefficients
     if hasattr(model, "coef_"):
@@ -280,6 +283,7 @@ def explain_prediction(
     contributions = decomposition["contributions"]
     feature_cols = bundle.get("feature_columns", FEATURE_COLUMNS)
     scaler = bundle.get("scaler")
+    raw_means = bundle.get("raw_feature_means", {})
     means = {}
     if scaler is not None and hasattr(scaler, "mean_"):
         means = {col: float(scaler.mean_[i]) for i, col in enumerate(feature_cols)}
@@ -292,7 +296,7 @@ def explain_prediction(
         val = features.get(col)
         contrib = contributions.get(col, 0.0)
         direction = "higher_risk" if contrib > 0 else ("lower_risk" if contrib < 0 else "neutral")
-        feat_mean = means.get(col, PROD_FEATURE_MEANS.get(col))
+        feat_mean = raw_means.get(col) or means.get(col) or PROD_FEATURE_MEANS.get(col)
         sentence = format_feature_sentence(col, val, contrib, mean=feat_mean)
 
         factor_data = {
